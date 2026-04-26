@@ -37,7 +37,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
@@ -55,6 +55,10 @@ import StepLabel from '@mui/material/StepLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Fade from '@mui/material/Fade';
+import Slide from '@mui/material/Slide';
+import Fab from '@mui/material/Fab';
+import useScrollTrigger from '@mui/material/useScrollTrigger';
 
 // MUI Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -126,8 +130,9 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import SecurityIcon from '@mui/icons-material/Security';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import AgentIcon from '@mui/icons-material/SupportAgent';
-import ProfileIcon from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 // Imported Context and Axios
 import useAxios from '../context/AxiosInstance/page';
@@ -151,50 +156,70 @@ const UGANDA_HOLIDAYS = [
   { month: 12, day: 26, name: "Boxing Day", icon: CelebrationIcon, color: '#FFD700' },
 ];
 
-// Styled components
+// ==================== ENHANCED STYLED COMPONENTS ====================
 const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: 16,
-  boxShadow: '0 4px 20px rgba(0, 37, 221, 0.1)',
-  transition: 'transform 0.2s, box-shadow 0.2s',
-  fontFamily: '"Poppins", sans-serif',
+  borderRadius: 20,
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  overflow: 'hidden',
   '&:hover': {
     transform: 'translateY(-4px)',
-    boxShadow: '0 8px 25px rgba(0, 37, 221, 0.15)',
+    boxShadow: '0 12px 40px rgba(0, 37, 221, 0.15)',
   },
 }));
 
 const StatCard = styled(Card)(({ theme, bgcolor }) => ({
-  borderRadius: 16,
+  borderRadius: 20,
   background: bgcolor || 'white',
   color: bgcolor ? 'white' : 'inherit',
-  boxShadow: '0 4px 20px rgba(0, 37, 221, 0.1)',
-  transition: 'transform 0.2s',
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+  transition: 'all 0.3s ease',
   height: '100%',
-  fontFamily: '"Poppins", sans-serif',
+  position: 'relative',
+  overflow: 'hidden',
   '&:hover': {
     transform: 'translateY(-4px)',
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
   },
+  '&::before': bgcolor ? {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'rgba(255,255,255,0.3)',
+  } : {},
 }));
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
   width: 280,
-  backgroundColor: 'white',
+  backgroundColor: '#FFFFFF',
   height: '100vh',
   position: 'fixed',
   left: 0,
   top: 0,
-  borderRight: '1px solid #e2e8f0',
+  borderRight: '1px solid rgba(0, 0, 0, 0.08)',
   display: 'flex',
   flexDirection: 'column',
-  fontFamily: '"Poppins", sans-serif',
+  fontFamily: '"Inter", "Poppins", sans-serif',
   overflowY: 'auto',
+  zIndex: 1100,
+  [theme.breakpoints.down('md')]: {
+    transform: 'translateX(-100%)',
+    transition: 'transform 0.3s ease',
+    '&.open': {
+      transform: 'translateX(0)',
+    },
+  },
 }));
 
 const MainContent = styled(Box)(({ theme }) => ({
   marginLeft: 280,
   minHeight: '100vh',
   backgroundColor: '#F8FAFC',
-  fontFamily: '"Poppins", sans-serif',
+  fontFamily: '"Inter", "Poppins", sans-serif',
+  transition: 'margin-left 0.3s ease',
   [theme.breakpoints.down('md')]: {
     marginLeft: 0,
   },
@@ -202,11 +227,17 @@ const MainContent = styled(Box)(({ theme }) => ({
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
     maxWidth: '900px',
     width: '100%',
-    fontFamily: '"Poppins", sans-serif',
+    margin: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+      borderRadius: 0,
+      height: '100%',
+      maxHeight: '100%',
+    },
   },
 }));
 
@@ -215,14 +246,17 @@ const DialogHeader = styled(Box)(({ theme, bgcolor }) => ({
   color: 'white',
   padding: theme.spacing(3),
   position: 'relative',
-  fontFamily: '"Poppins", sans-serif',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
   borderRadius: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   textTransform: 'none',
   padding: '10px 24px',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+  },
 }));
 
 const StatusChip = styled(Chip)(({ status, theme }) => {
@@ -234,42 +268,57 @@ const StatusChip = styled(Chip)(({ status, theme }) => {
     case 'resolved':
     case 'valid':
     case 'active':
-      backgroundColor = '#d1fae5';
-      color = '#065f46';
-      borderColor = '#a7f3d0';
+      backgroundColor = alpha(theme.palette.success.main, 0.1);
+      color = theme.palette.success.dark;
       break;
     case 'pending':
-      backgroundColor = '#fef3c7';
-      color = '#92400e';
-      borderColor = '#fde68a';
+      backgroundColor = alpha(theme.palette.warning.main, 0.1);
+      color = theme.palette.warning.dark;
       break;
     case 'failed':
     case 'invalid':
     case 'inactive':
     case 'cancelled':
     case 'suspended':
-      backgroundColor = '#fee2e2';
-      color = '#991b1b';
-      borderColor = '#fecaca';
+      backgroundColor = alpha(theme.palette.error.main, 0.1);
+      color = theme.palette.error.dark;
       break;
     default:
-      backgroundColor = '#e5e7eb';
-      color = '#374151';
-      borderColor = '#d1d5db';
+      backgroundColor = alpha(theme.palette.grey[500], 0.1);
+      color = theme.palette.grey[700];
   }
   
   return {
     backgroundColor,
     color,
-    border: `1px solid ${borderColor}`,
     fontWeight: 600,
     fontSize: '0.75rem',
-    height: 24,
-    '& .MuiChip-label': {
-      padding: '0 8px',
-    }
+    height: 26,
+    borderRadius: '8px',
   };
 });
+
+const SearchBar = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+    },
+    '&.Mui-focused': {
+      boxShadow: '0 0 0 2px rgba(0, 37, 221, 0.1)',
+    },
+  },
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+  borderRadius: 12,
+  padding: '8px 16px',
+  fontWeight: 600,
+  textTransform: 'none',
+  gap: 8,
+}));
 
 // ==================== GREETING FUNCTION ====================
 const getDynamicGreeting = () => {
@@ -295,6 +344,45 @@ const getDynamicGreeting = () => {
   return { text: "Good Night", icon: NightsStayIcon, color: '#4B5563' };
 };
 
+// ==================== SCROLL TO TOP BUTTON ====================
+function ScrollToTop() {
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 300,
+  });
+
+  const handleClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <Fade in={trigger}>
+      <Box
+        onClick={handleClick}
+        role="presentation"
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 1000,
+        }}
+      >
+        <Fab
+          size="small"
+          aria-label="scroll back to top"
+          sx={{
+            bgcolor: '#0025DD',
+            color: 'white',
+            '&:hover': { bgcolor: '#001DB0' },
+          }}
+        >
+          <ArrowUpwardIcon />
+        </Fab>
+      </Box>
+    </Fade>
+  );
+}
+
 // ==================== DETAILS MODAL ====================
 const DetailsModal = ({ open, onClose, title, data, type }) => {
   const theme = useTheme();
@@ -302,95 +390,81 @@ const DetailsModal = ({ open, onClose, title, data, type }) => {
 
   if (!data) return null;
 
+  const DetailRow = ({ label, value, highlight }) => (
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', fontWeight: 500 }}>
+        {label}
+      </Typography>
+      <Typography 
+        variant="body2" 
+        fontWeight={highlight ? "bold" : 500}
+        sx={{ 
+          color: highlight ? '#0025DD' : 'inherit',
+          wordBreak: 'break-word',
+        }}
+      >
+        {value || 'N/A'}
+      </Typography>
+    </Box>
+  );
+
   const renderTripDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Trip ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Trip ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Date</Typography>
-        <Typography variant="body2" fontWeight="500">{new Date(data.created_at).toLocaleString()}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Date" value={new Date(data.created_at).toLocaleString()} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Rider</Typography>
-        <Typography variant="body2" fontWeight="500">{data.rider_name || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Rider" value={data.rider_name} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Customer</Typography>
-        <Typography variant="body2" fontWeight="500">{data.customer_name || 'Guest'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Customer" value={data.customer_name || 'Guest'} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Route</Typography>
-        <Typography variant="body2" fontWeight="500">
-          {data.pickup_location} → {data.destination}
-        </Typography>
+        <DetailRow label="Route" value={`${data.pickup_location} → ${data.destination}`} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Amount</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#0025DD">
-          UGX {data.trip_fare?.toLocaleString()}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Amount" value={`UGX ${data.trip_fare?.toLocaleString()}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Payment Method</Typography>
-        <Chip 
-          label={data.payment_method} 
-          size="small"
-          sx={{ textTransform: 'capitalize' }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Payment Method" value={<Chip label={data.payment_method} size="small" />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <Chip 
-          label={data.status} 
-          size="small"
-          sx={{ 
-            bgcolor: data.status === 'completed' ? '#E8FFF0' : '#F3F4F6',
-            color: data.status === 'completed' ? '#166534' : '#111827',
-          }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<StatusChip status={data.status} label={data.status} />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Duration</Typography>
-        <Typography variant="body2" fontWeight="500">{data.duration || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Duration" value={data.duration} />
       </Grid>
     </Grid>
   );
 
   const renderExpenseDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Expense ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Expense ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Date</Typography>
-        <Typography variant="body2" fontWeight="500">{new Date(data.created_at).toLocaleString()}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Date" value={new Date(data.created_at).toLocaleString()} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Rider</Typography>
-        <Typography variant="body2" fontWeight="500">{data.rider_name || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Rider" value={data.rider_name} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Category</Typography>
-        <Chip label={data.category} size="small" />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Category" value={<Chip label={data.category} size="small" />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Amount</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#DC2626">
-          UGX {data.amount?.toLocaleString()}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Amount" value={`UGX ${data.amount?.toLocaleString()}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Expense Type</Typography>
-        <Typography variant="body2" fontWeight="500">{data.expense_type}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Expense Type" value={data.expense_type} />
       </Grid>
       {data.receipt && (
         <Grid item xs={12}>
-          <Button variant="outlined" startIcon={<ReceiptIcon />} size="small">
+          <ActionButton variant="outlined" startIcon={<ReceiptIcon />} size="small">
             View Receipt
-          </Button>
+          </ActionButton>
         </Grid>
       )}
     </Grid>
@@ -398,241 +472,161 @@ const DetailsModal = ({ open, onClose, title, data, type }) => {
 
   const renderDeliveryDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Delivery ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Delivery ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Date</Typography>
-        <Typography variant="body2" fontWeight="500">{new Date(data.created_at).toLocaleString()}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Date" value={new Date(data.created_at).toLocaleString()} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Rider</Typography>
-        <Typography variant="body2" fontWeight="500">{data.rider_name || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Rider" value={data.rider_name} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Package Type</Typography>
-        <Typography variant="body2" fontWeight="500">{data.package_type}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Package Type" value={data.package_type} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Route</Typography>
-        <Typography variant="body2" fontWeight="500">
-          {data.pickup_location} → {data.drop_off_location}
-        </Typography>
+        <DetailRow label="Route" value={`${data.pickup_location} → ${data.drop_off_location}`} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Delivery Fee</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#0025DD">
-          UGX {data.delivery_fee?.toLocaleString()}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Delivery Fee" value={`UGX ${data.delivery_fee?.toLocaleString()}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Payment Method</Typography>
-        <Chip 
-          label={data.payment_method} 
-          size="small"
-          sx={{ textTransform: 'capitalize' }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Payment Method" value={<Chip label={data.payment_method} size="small" />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <Chip 
-          label={data.status} 
-          size="small"
-          sx={{ 
-            bgcolor: data.status === 'completed' ? '#E8FFF0' : 
-                    data.status === 'active' ? '#DBEAFE' : '#F3F4F6',
-            color: data.status === 'completed' ? '#166534' : 
-                   data.status === 'active' ? '#1E40AF' : '#111827',
-          }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<StatusChip status={data.status} label={data.status} />} />
       </Grid>
     </Grid>
   );
 
   const renderGroupDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Group ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Group ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Created</Typography>
-        <Typography variant="body2" fontWeight="500">{new Date(data.created_at).toLocaleDateString()}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Created" value={new Date(data.created_at).toLocaleDateString()} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Group Name</Typography>
-        <Typography variant="body2" fontWeight="bold">{data.name}</Typography>
+        <DetailRow label="Group Name" value={data.name} highlight />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Description</Typography>
-        <Typography variant="body2">{data.description || 'No description'}</Typography>
+        <DetailRow label="Description" value={data.description || 'No description'} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Group Type</Typography>
-        <Chip label={data.group_type} size="small" />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Group Type" value={<Chip label={data.group_type} size="small" />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Members</Typography>
-        <Typography variant="body2" fontWeight="500">{data.member_count || 0} / {data.max_members}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Members" value={`${data.member_count || 0} / ${data.max_members}`} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Contribution</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#10B981">
-          UGX {data.contrib_amount?.toLocaleString()}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Contribution" value={`UGX ${data.contrib_amount?.toLocaleString()}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Frequency</Typography>
-        <Typography variant="body2">{data.contrib_frequency}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Frequency" value={data.contrib_frequency} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Total Pool</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#0025DD">
-          UGX {data.total_pool?.toLocaleString() || '0'}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Total Pool" value={`UGX ${data.total_pool?.toLocaleString() || '0'}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <Chip 
-          label={data.is_public ? 'Public' : 'Private'} 
-          size="small"
-          sx={{ bgcolor: data.is_public ? '#E8FFF0' : '#F3F4F6' }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<Chip label={data.is_public ? 'Public' : 'Private'} size="small" />} />
       </Grid>
     </Grid>
   );
 
   const renderWalletDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Wallet ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Wallet ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Rider</Typography>
-        <Typography variant="body2" fontWeight="500">{data.rider_name || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Rider" value={data.rider_name} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Balance</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#0025DD">
-          UGX {data.balance?.toLocaleString() || '0'}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Balance" value={`UGX ${data.balance?.toLocaleString() || '0'}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Available</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#10B981">
-          UGX {data.available_balance?.toLocaleString() || '0'}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Available" value={`UGX ${data.available_balance?.toLocaleString() || '0'}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Reserved</Typography>
-        <Typography variant="body2" fontWeight="500">
-          UGX {data.reserved_balance?.toLocaleString() || '0'}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Reserved" value={`UGX ${data.reserved_balance?.toLocaleString() || '0'}`} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Currency</Typography>
-        <Typography variant="body2">{data.currency || 'UGX'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Currency" value={data.currency || 'UGX'} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <Chip 
-          label={data.is_active ? 'Active' : 'Inactive'} 
-          size="small"
-          sx={{ bgcolor: data.is_active ? '#E8FFF0' : '#F3F4F6' }}
-        />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<StatusChip status={data.is_active ? 'active' : 'inactive'} label={data.is_active ? 'Active' : 'Inactive'} />} />
       </Grid>
     </Grid>
   );
 
   const renderContactDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Contact ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Contact ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Type</Typography>
-        <Chip label={data.type} size="small" />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Type" value={<Chip label={data.type} size="small" />} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Full Name</Typography>
-        <Typography variant="body2" fontWeight="bold">{data.full_name}</Typography>
+        <DetailRow label="Full Name" value={data.full_name} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Phone</Typography>
-        <Typography variant="body2">{data.phone || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Phone" value={data.phone} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Email</Typography>
-        <Typography variant="body2">{data.email || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Email" value={data.email} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Business Name</Typography>
-        <Typography variant="body2">{data.bussiness_name || 'N/A'}</Typography>
+        <DetailRow label="Business Name" value={data.bussiness_name} />
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="caption" color="text.secondary">Location</Typography>
-        <Typography variant="body2">{data.location || 'N/A'}</Typography>
+        <DetailRow label="Location" value={data.location} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Loyalty Points</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#F59E0B">
-          {data.loyalty_points || 0}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Loyalty Points" value={data.loyalty_points || 0} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <StatusChip status={data.status} label={data.status} />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<StatusChip status={data.status} label={data.status} />} />
       </Grid>
     </Grid>
   );
 
   const renderAgentDetails = () => (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Agent ID</Typography>
-        <Typography variant="body2" fontWeight="500">{data.id?.slice(0, 12)}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Agent ID" value={data.id?.slice(0, 12)} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Rider</Typography>
-        <Typography variant="body2" fontWeight="500">{data.rider_name || 'N/A'}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Rider" value={data.rider_name} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Referral Code</Typography>
-        <Typography variant="body2" fontWeight="bold">{data.referral_code}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Referral Code" value={data.referral_code} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Status</Typography>
-        <StatusChip status={data.is_active ? 'active' : 'inactive'} label={data.is_active ? 'Active' : 'Inactive'} />
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Status" value={<StatusChip status={data.is_active ? 'active' : 'inactive'} label={data.is_active ? 'Active' : 'Inactive'} />} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Total Referrals</Typography>
-        <Typography variant="body2" fontWeight="500">{data.total_referrals || 0}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Total Referrals" value={data.total_referrals || 0} />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Total Commission</Typography>
-        <Typography variant="body2" fontWeight="bold" color="#10B981">
-          UGX {data.total_commission?.toLocaleString() || '0'}
-        </Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Total Commission" value={`UGX ${data.total_commission?.toLocaleString() || '0'}`} highlight />
       </Grid>
-      <Grid item xs={6}>
-        <Typography variant="caption" color="text.secondary">Created</Typography>
-        <Typography variant="body2">{new Date(data.created_at).toLocaleDateString()}</Typography>
+      <Grid item xs={12} sm={6}>
+        <DetailRow label="Created" value={new Date(data.created_at).toLocaleDateString()} />
       </Grid>
     </Grid>
   );
 
   return (
-    <StyledDialog open={open} onClose={onClose} fullScreen={isMobile}>
+    <StyledDialog open={open} onClose={onClose} fullScreen={isMobile} TransitionComponent={Slide}>
       <DialogHeader bgcolor="#0025DD">
-        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8, color: 'white' }}>
+        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 16, top: 16, color: 'white' }}>
           <CloseIcon />
         </IconButton>
         <Typography variant="h6" fontWeight="bold">{title}</Typography>
       </DialogHeader>
-      <DialogContent sx={{ p: 3 }}>
+      <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
         {type === 'trip' && renderTripDetails()}
         {type === 'expense' && renderExpenseDetails()}
         {type === 'delivery' && renderDeliveryDetails()}
@@ -641,8 +635,8 @@ const DetailsModal = ({ open, onClose, title, data, type }) => {
         {type === 'contact' && renderContactDetails()}
         {type === 'agent' && renderAgentDetails()}
       </DialogContent>
-      <DialogActions sx={{ p: 3, borderTop: '1px solid #e2e8f0' }}>
-        <Button onClick={onClose} variant="contained" sx={{ bgcolor: '#0025DD' }}>
+      <DialogActions sx={{ p: { xs: 2, sm: 3 }, borderTop: '1px solid rgba(0, 0, 0, 0.08)' }}>
+        <Button onClick={onClose} variant="contained" sx={{ bgcolor: '#0025DD', borderRadius: 2 }}>
           Close
         </Button>
       </DialogActions>
@@ -654,6 +648,7 @@ const DetailsModal = ({ open, onClose, title, data, type }) => {
 const SuperAdminDashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
   const navigate = useNavigate();
   
   const { user } = useContext(AuthContext);
@@ -837,27 +832,27 @@ const SuperAdminDashboard = () => {
 
   const getStatusChipSx = (status) => {
     const s = (status || '').toLowerCase();
-    if (s === 'completed' || s === 'active') return { bgcolor: '#E8FFF0', color: '#166534' };
-    if (s === 'cancelled' || s === 'suspended' || s === 'inactive') return { bgcolor: '#FFECEC', color: '#991B1B' };
-    if (s === 'pending') return { bgcolor: '#FFF7D6', color: '#92400E' };
-    return { bgcolor: '#F3F4F6', color: '#111827' };
+    if (s === 'completed' || s === 'active') return { bgcolor: alpha('#10B981', 0.1), color: '#065F46' };
+    if (s === 'cancelled' || s === 'suspended' || s === 'inactive') return { bgcolor: alpha('#DC2626', 0.1), color: '#991B1B' };
+    if (s === 'pending') return { bgcolor: alpha('#F59E0B', 0.1), color: '#92400E' };
+    return { bgcolor: alpha('#6B7280', 0.1), color: '#374151' };
   };
 
   const getTypeColor = (type) => {
     switch (type) {
       case 'customer': return '#0025DD';
-      case 'supplier': return '#f59e0b';
-      case 'employee': return '#10b981';
-      default: return '#64748b';
+      case 'supplier': return '#F59E0B';
+      case 'employee': return '#10B981';
+      default: return '#64748B';
     }
   };
 
   const getTypeBackgroundColor = (type) => {
     switch (type) {
-      case 'customer': return '#e6f0ff';
-      case 'supplier': return '#fff7d6';
-      case 'employee': return '#e8fff0';
-      default: return '#f5f5f5';
+      case 'customer': return alpha('#0025DD', 0.1);
+      case 'supplier': return alpha('#F59E0B', 0.1);
+      case 'employee': return alpha('#10B981', 0.1);
+      default: return alpha('#64748B', 0.1);
     }
   };
 
@@ -1059,25 +1054,25 @@ const SuperAdminDashboard = () => {
     { label: 'Group Pool', value: `UGX ${formatCurrency(dashboardStats.groupPool)}`, subValue: 'Total savings', icon: AccountBalanceIcon, color: '#F59E0B' },
     { label: 'Total Wallets', value: dashboardStats.totalWallets, subValue: `UGX ${formatCurrency(dashboardStats.totalWalletBalance)} balance`, icon: WalletIcon, color: '#06B6D4' },
     { label: 'Total Contacts', value: dashboardStats.totalContacts, subValue: `${dashboardStats.activeContacts} active`, icon: ContactsIcon, color: '#EC4899' },
-    { label: 'Total Agents', value: dashboardStats.totalAgents, subValue: `${dashboardStats.activeAgents} active`, icon: AgentIcon, color: '#8B5CF6' },
+    { label: 'Total Agents', value: dashboardStats.totalAgents, subValue: `${dashboardStats.activeAgents} active`, icon: PeopleIcon, color: '#8B5CF6' },
     { label: 'Agent Commissions', value: `UGX ${formatCurrency(dashboardStats.totalAgentCommissions)}`, subValue: 'Total paid out', icon: PaidIcon, color: '#10B981' },
   ];
 
   // ============ RENDER SIDEBAR ============
   const renderSidebar = () => (
-    <SidebarContainer sx={{ display: { xs: 'none', md: 'flex' } }}>
-      <Box sx={{ p: 3, borderBottom: '1px solid #e2e8f0' }}>
-        <Typography variant="h5" fontWeight="bold" color="#0025DD">
+    <SidebarContainer className={mobileSidebarOpen ? 'open' : ''}>
+      <Box sx={{ p: 3, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', background: 'linear-gradient(135deg, #0025DD 0%, #2D4BFF 100%)' }}>
+        <Typography variant="h5" fontWeight="bold" color="white">
           Enfuna Admin
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
           Super Admin Panel
         </Typography>
       </Box>
       
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <Avatar sx={{ bgcolor: '#0025DD' }}>
+          <Avatar sx={{ bgcolor: '#0025DD', width: 48, height: 48 }}>
             <AdminPanelSettingsIcon />
           </Avatar>
           <Box>
@@ -1087,49 +1082,74 @@ const SuperAdminDashboard = () => {
         </Box>
       </Box>
       
-      <Divider />
+      <Divider sx={{ mx: 2 }} />
       
-      <List sx={{ flex: 1, px: 2 }}>
+      <List sx={{ flex: 1, px: 1, py: 2 }}>
         {[
-          { label: 'Dashboard', icon: DashboardIcon },
-          { label: 'Riders', icon: PeopleIcon },
-          { label: 'Trips', icon: DirectionsCarIcon },
-          { label: 'Deliveries', icon: LocalShippingIcon },
-          { label: 'Expenses', icon: ReceiptIcon },
-          { label: 'Groups', icon: GroupsIcon },
-          { label: 'Wallets', icon: WalletIcon, badge: withdrawals.length },
-          { label: 'Contacts', icon: ContactsIcon },
-          { label: 'Agents', icon: AgentIcon },
-          { label: 'Withdrawals', icon: AccountBalanceIcon },
-        ].map((item, index) => (
+          { label: 'Dashboard', icon: DashboardIcon, tab: 0 },
+          { label: 'Riders', icon: PeopleIcon, tab: 1 },
+          { label: 'Trips', icon: DirectionsCarIcon, tab: 2 },
+          { label: 'Deliveries', icon: LocalShippingIcon, tab: 3 },
+          { label: 'Expenses', icon: ReceiptIcon, tab: 4 },
+          { label: 'Groups', icon: GroupsIcon, tab: 5 },
+          { label: 'Wallets', icon: WalletIcon, tab: 6, badge: withdrawals.length },
+          { label: 'Contacts', icon: ContactsIcon, tab: 7 },
+          { label: 'Agents', icon: PeopleIcon, tab: 8 },
+          { label: 'Withdrawals', icon: AccountBalanceIcon, tab: 9, badge: withdrawals.length },
+        ].map((item) => (
           <ListItem 
-            key={index}
-            button 
-            selected={activeTab === index}
-            onClick={() => setActiveTab(index)}
-            sx={{ borderRadius: 2, mb: 0.5 }}
+            key={item.tab}
+            component="div"
+            onClick={() => {
+              setActiveTab(item.tab);
+              setMobileSidebarOpen(false);
+            }}
+            sx={{ 
+              borderRadius: 2, 
+              mb: 0.5,
+              cursor: 'pointer',
+              bgcolor: activeTab === item.tab ? alpha('#0025DD', 0.08) : 'transparent',
+              '&:hover': {
+                bgcolor: alpha('#0025DD', 0.05),
+              },
+            }}
           >
             <ListItemIcon>
-              <item.icon sx={{ color: activeTab === index ? '#0025DD' : '#64748B' }} />
+              <item.icon sx={{ color: activeTab === item.tab ? '#0025DD' : '#64748B' }} />
             </ListItemIcon>
-            <ListItemText primary={item.label} />
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{ 
+                fontWeight: activeTab === item.tab ? 600 : 400,
+                color: activeTab === item.tab ? '#0025DD' : 'inherit',
+              }}
+            />
             {item.badge > 0 && (
-              <Chip label={item.badge} size="small" sx={{ bgcolor: '#DC2626', color: 'white' }} />
+              <Chip 
+                label={item.badge} 
+                size="small" 
+                sx={{ 
+                  bgcolor: '#DC2626', 
+                  color: 'white',
+                  height: 20,
+                  '& .MuiChip-label': { fontSize: '0.7rem', px: 1 }
+                }} 
+              />
             )}
           </ListItem>
         ))}
       </List>
       
-      <Box sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
-        <Button
+      <Box sx={{ p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.08)' }}>
+        <ActionButton
           fullWidth
           variant="outlined"
           startIcon={<SettingsIcon />}
           sx={{ mb: 1, borderColor: '#0025DD', color: '#0025DD' }}
         >
           Settings
-        </Button>
-        <Button
+        </ActionButton>
+        <ActionButton
           fullWidth
           variant="contained"
           startIcon={<LogoutIcon />}
@@ -1137,21 +1157,21 @@ const SuperAdminDashboard = () => {
           onClick={() => navigate('/admin/login')}
         >
           Logout
-        </Button>
+        </ActionButton>
       </Box>
     </SidebarContainer>
   );
 
   // ============ RENDER DASHBOARD TAB ============
   const renderDashboardTab = () => (
-    <Box sx={{ p: isMobile ? 2 : 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Header */}
       <StyledCard sx={{ mb: 3 }}>
         <Box sx={{ 
           background: greeting.isHoliday 
             ? `linear-gradient(135deg, ${greeting.color} 0%, ${greeting.color}dd 100%)`
             : 'linear-gradient(135deg, #0025DD 0%, #2D4BFF 100%)',
-          p: 3, 
+          p: { xs: 2, sm: 3 }, 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
@@ -1159,9 +1179,9 @@ const SuperAdminDashboard = () => {
           gap: 2
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {greeting.icon && <greeting.icon sx={{ color: 'white', fontSize: 32 }} />}
+            {greeting.icon && <greeting.icon sx={{ color: 'white', fontSize: { xs: 28, sm: 32 } }} />}
             <Box>
-              <Typography variant="h5" fontWeight="bold" color="white">
+              <Typography variant="h5" fontWeight="bold" color="white" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                 {greeting.text}, Administrator!
               </Typography>
               <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)' }}>
@@ -1175,55 +1195,33 @@ const SuperAdminDashboard = () => {
             </Box>
           </Box>
           
-          <Button
+          <ActionButton
             variant="contained"
             startIcon={<RefreshIcon />}
             onClick={handleRefresh}
             disabled={refreshing}
-            sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}
+            sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
           >
-            {refreshing ? <CircularProgress size={24} color="inherit" /> : 'Refresh'}
-          </Button>
+            {refreshing ? <CircularProgress size={20} color="inherit" /> : 'Refresh'}
+          </ActionButton>
         </Box>
       </StyledCard>
 
       {/* Stats Cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        {statsCards.slice(0, 8).map((stat, index) => (
+        {statsCards.map((stat, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
             <StatCard bgcolor={stat.color}>
-              <CardContent>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.9 }}>{stat.label}</Typography>
-                    <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5, fontSize: '1rem' }}>
+                    <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.7rem' }}>{stat.label}</Typography>
+                    <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                       {stat.value}
                     </Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>{stat.subValue}</Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8, fontSize: '0.65rem' }}>{stat.subValue}</Typography>
                   </Box>
-                  <stat.icon />
-                </Box>
-              </CardContent>
-            </StatCard>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Agent Stats Row */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {statsCards.slice(8).map((stat, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index + 8}>
-            <StatCard bgcolor={stat.color}>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.9 }}>{stat.label}</Typography>
-                    <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5, fontSize: '1rem' }}>
-                      {stat.value}
-                    </Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>{stat.subValue}</Typography>
-                  </Box>
-                  <stat.icon />
+                  <stat.icon sx={{ fontSize: { xs: 28, sm: 32 }, opacity: 0.9 }} />
                 </Box>
               </CardContent>
             </StatCard>
@@ -1235,8 +1233,9 @@ const SuperAdminDashboard = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <StyledCard>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight="bold" color="#0025DD">Recent Trips</Typography>
+              <Button size="small" onClick={() => setActiveTab(2)} sx={{ color: '#0025DD' }}>View All</Button>
             </Box>
             <TableContainer>
               <Table size="small">
@@ -1253,10 +1252,15 @@ const SuperAdminDashboard = () => {
                       <TableCell>{trip.rider_name}</TableCell>
                       <TableCell>UGX {formatCurrency(trip.trip_fare)}</TableCell>
                       <TableCell>
-                        <Chip label={trip.status} size="small" sx={getStatusChipSx(trip.status)} />
+                        <StatusChip status={trip.status} label={trip.status} />
                       </TableCell>
                     </TableRow>
                   ))}
+                  {trips.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">No trips data available</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1265,8 +1269,9 @@ const SuperAdminDashboard = () => {
         
         <Grid item xs={12} md={6}>
           <StyledCard>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight="bold" color="#0025DD">Recent Expenses</Typography>
+              <Button size="small" onClick={() => setActiveTab(4)} sx={{ color: '#0025DD' }}>View All</Button>
             </Box>
             <TableContainer>
               <Table size="small">
@@ -1282,9 +1287,14 @@ const SuperAdminDashboard = () => {
                     <TableRow key={expense.id} hover>
                       <TableCell>{expense.rider_name}</TableCell>
                       <TableCell>{expense.category}</TableCell>
-                      <TableCell sx={{ color: '#DC2626' }}>UGX {formatCurrency(expense.amount)}</TableCell>
+                      <TableCell sx={{ color: '#DC2626', fontWeight: 500 }}>UGX {formatCurrency(expense.amount)}</TableCell>
                     </TableRow>
                   ))}
+                  {expenses.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">No expenses data available</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1296,7 +1306,7 @@ const SuperAdminDashboard = () => {
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid item xs={12} md={4}>
           <StyledCard>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight="bold" color="#0025DD">Wallet Activity</Typography>
               <Button size="small" onClick={() => setActiveTab(6)} sx={{ color: '#0025DD' }}>View All</Button>
             </Box>
@@ -1314,13 +1324,18 @@ const SuperAdminDashboard = () => {
                     <TableRow key={tx.id} hover>
                       <TableCell>{tx.rider_name}</TableCell>
                       <TableCell>
-                        <Chip label={tx.entry_type} size="small" />
+                        <Chip label={tx.entry_type} size="small" sx={{ fontSize: '0.7rem' }} />
                       </TableCell>
-                      <TableCell sx={{ color: tx.entry_type === 'CREDIT' ? '#10B981' : '#DC2626' }}>
+                      <TableCell sx={{ color: tx.entry_type === 'CREDIT' ? '#10B981' : '#DC2626', fontWeight: 500 }}>
                         UGX {formatCurrency(tx.amount)}
                       </TableCell>
                     </TableRow>
                   ))}
+                  {walletTransactions.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">No wallet activity</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1329,7 +1344,7 @@ const SuperAdminDashboard = () => {
         
         <Grid item xs={12} md={4}>
           <StyledCard>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight="bold" color="#0025DD">Recent Contacts</Typography>
               <Button size="small" onClick={() => setActiveTab(7)} sx={{ color: '#0025DD' }}>View All</Button>
             </Box>
@@ -1347,11 +1362,20 @@ const SuperAdminDashboard = () => {
                     <TableRow key={contact.id} hover>
                       <TableCell>{contact.full_name}</TableCell>
                       <TableCell>
-                        <Chip label={contact.type} size="small" />
+                        <Chip 
+                          label={contact.type} 
+                          size="small" 
+                          sx={{ bgcolor: getTypeBackgroundColor(contact.type), color: getTypeColor(contact.type) }}
+                        />
                       </TableCell>
                       <TableCell>{contact.phone}</TableCell>
                     </TableRow>
                   ))}
+                  {contacts.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">No contacts available</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1360,7 +1384,7 @@ const SuperAdminDashboard = () => {
 
         <Grid item xs={12} md={4}>
           <StyledCard>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight="bold" color="#0025DD">Top Agents</Typography>
               <Button size="small" onClick={() => setActiveTab(8)} sx={{ color: '#0025DD' }}>View All</Button>
             </Box>
@@ -1378,9 +1402,14 @@ const SuperAdminDashboard = () => {
                     <TableRow key={agent.id} hover>
                       <TableCell>{agent.rider_name}</TableCell>
                       <TableCell>{agent.total_referrals || 0}</TableCell>
-                      <TableCell sx={{ color: '#10B981' }}>UGX {formatCurrency(agent.total_commission)}</TableCell>
+                      <TableCell sx={{ color: '#10B981', fontWeight: 500 }}>UGX {formatCurrency(agent.total_commission)}</TableCell>
                     </TableRow>
                   ))}
+                  {agents.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">No agents available</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1410,70 +1439,75 @@ const SuperAdminDashboard = () => {
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-      <Box sx={{ p: isMobile ? 2 : 3 }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
         <StyledCard>
-          <Box sx={{ p: 2, borderBottom: '1px solid #e2e8f0' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" fontWeight="bold" color="#0025DD">
+          <Box sx={{ p: { xs: 1.5, sm: 2 }, borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, gap: 2, mb: 2 }}>
+              <Typography variant="h6" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
                 {title}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {type === 'contact' && (
                   <>
-                    <StyledButton
+                    <ActionButton
                       variant="contained"
                       startIcon={<AddIcon />}
                       onClick={handleOpenAddContact}
-                      sx={{ bgcolor: '#FFEC01', color: '#000' }}
+                      sx={{ bgcolor: '#FFEC01', color: '#000', '&:hover': { bgcolor: '#E6D400' } }}
+                      size="small"
                     >
                       Add Contact
-                    </StyledButton>
-                    <Button
+                    </ActionButton>
+                    <ActionButton
                       variant="outlined"
                       startIcon={<FileDownloadIcon />}
                       onClick={exportContactsPDF}
                       sx={{ borderColor: '#0025DD', color: '#0025DD' }}
+                      size="small"
                     >
                       Export
-                    </Button>
+                    </ActionButton>
                   </>
                 )}
                 {type === 'wallet' && (
-                  <Button
+                  <ActionButton
                     variant="outlined"
                     startIcon={<FileDownloadIcon />}
                     onClick={exportWalletsPDF}
                     sx={{ borderColor: '#0025DD', color: '#0025DD' }}
+                    size="small"
                   >
                     Export
-                  </Button>
+                  </ActionButton>
                 )}
                 {type === 'agent' && (
-                  <Button
+                  <ActionButton
                     variant="outlined"
                     startIcon={<FileDownloadIcon />}
                     onClick={exportAgentsPDF}
                     sx={{ borderColor: '#0025DD', color: '#0025DD' }}
+                    size="small"
                   >
                     Export
-                  </Button>
+                  </ActionButton>
                 )}
               </Box>
             </Box>
+            
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={6}>
-                <TextField
+                <SearchBar
                   fullWidth
                   size="small"
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   InputProps={{
-                    startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                    startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: '#94A3B8' }} /></InputAdornment>,
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={6} md={3}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Status</InputLabel>
                   <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} label="Status">
@@ -1486,7 +1520,7 @@ const SuperAdminDashboard = () => {
                 </FormControl>
               </Grid>
               {extraFilters && (
-                <Grid item xs={12} md={3}>
+                <Grid item xs={6} md={3}>
                   <FormControl fullWidth size="small">
                     <InputLabel>Type</InputLabel>
                     <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} label="Type">
@@ -1501,56 +1535,69 @@ const SuperAdminDashboard = () => {
             </Grid>
           </Box>
 
-          <TableContainer>
-            <Table>
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size={isMobile ? "small" : "medium"}>
               <TableHead>
                 <TableRow>
                   {columns.map((col) => (
-                    <TableCell key={col.key}>{col.label}</TableCell>
+                    <TableCell key={col.key} sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{col.label}</TableCell>
                   ))}
-                  <TableCell>Actions</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={columns.length + 1} align="center">
+                    <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 4 }}>
                       <CircularProgress />
                     </TableCell>
                   </TableRow>
                 ) : paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={columns.length + 1} align="center">
-                      No data found
+                    <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 4 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                        <ErrorIcon sx={{ color: '#94A3B8', fontSize: 40 }} />
+                        <Typography color="text.secondary">No data found</Typography>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedData.map((item) => (
-                    <TableRow key={item.id} hover>
+                    <TableRow key={item.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       {columns.map((col) => (
-                        <TableCell key={col.key}>
+                        <TableCell key={col.key} sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {col.render ? col.render(item) : item[col.key]}
                         </TableCell>
                       ))}
                       <TableCell>
-                        <IconButton size="small" onClick={() => handleViewDetails(item, type)}>
-                          <VisibilityIcon />
-                        </IconButton>
-                        {type === 'contact' && (
-                          <>
-                            <IconButton size="small" onClick={() => handleOpenEditContact(item)}>
-                              <EditIcon fontSize="small" />
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Tooltip title="View Details">
+                            <IconButton size="small" onClick={() => handleViewDetails(item, type)}>
+                              <VisibilityIcon fontSize="small" />
                             </IconButton>
-                            <IconButton size="small" onClick={() => handleDeleteContact(item.id)}>
-                              <DeleteIcon fontSize="small" sx={{ color: '#DC2626' }} />
-                            </IconButton>
-                          </>
-                        )}
-                        {type === 'rider' && (
-                          <IconButton size="small" onClick={() => handleViewRiderProfile(item)}>
-                            <ProfileIcon fontSize="small" />
-                          </IconButton>
-                        )}
+                          </Tooltip>
+                          {type === 'contact' && (
+                            <>
+                              <Tooltip title="Edit">
+                                <IconButton size="small" onClick={() => handleOpenEditContact(item)}>
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Delete">
+                                <IconButton size="small" onClick={() => handleDeleteContact(item.id)}>
+                                  <DeleteIcon fontSize="small" sx={{ color: '#DC2626' }} />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
+                          {type === 'rider' && (
+                            <Tooltip title="View Profile">
+                              <IconButton size="small" onClick={() => handleViewRiderProfile(item)}>
+                                <PersonIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))
@@ -1569,6 +1616,7 @@ const SuperAdminDashboard = () => {
               setRowsPerPage(parseInt(e.target.value, 10));
               setPage(0);
             }}
+            rowsPerPageOptions={[5, 10, 25, 50]}
           />
         </StyledCard>
       </Box>
@@ -1583,19 +1631,19 @@ const SuperAdminDashboard = () => {
           <Avatar sx={{ width: 32, height: 32, bgcolor: getTypeBackgroundColor(c.type), color: getTypeColor(c.type) }}>
             {c.full_name?.charAt(0)?.toUpperCase() || '?'}
           </Avatar>
-          {c.full_name}
+          <Typography variant="body2" noWrap>{c.full_name}</Typography>
         </Box>
       )},
       { key: 'type', label: 'Type', render: (c) => (
         <Chip 
           label={c.type} 
           size="small" 
-          sx={{ bgcolor: getTypeBackgroundColor(c.type), color: getTypeColor(c.type) }}
+          sx={{ bgcolor: getTypeBackgroundColor(c.type), color: getTypeColor(c.type), fontWeight: 500 }}
         />
       )},
       { key: 'phone', label: 'Phone' },
       { key: 'email', label: 'Email' },
-      { key: 'bussiness_name', label: 'Business' },
+      { key: 'bussiness_name', label: 'Business', render: (c) => c.bussiness_name || 'N/A' },
       { key: 'loyalty_points', label: 'Points', render: (c) => (
         <Typography fontWeight="bold" color="#F59E0B">{c.loyalty_points || 0}</Typography>
       )},
@@ -1615,7 +1663,7 @@ const SuperAdminDashboard = () => {
           <Avatar sx={{ width: 32, height: 32, bgcolor: '#0025DD' }}>
             <PersonIcon fontSize="small" />
           </Avatar>
-          {w.rider_name || 'N/A'}
+          <Typography variant="body2" noWrap>{w.rider_name || 'N/A'}</Typography>
         </Box>
       )},
       { key: 'balance', label: 'Balance', render: (w) => `UGX ${formatCurrency(w.balance)}` },
@@ -1638,13 +1686,13 @@ const SuperAdminDashboard = () => {
       { key: 'rider_name', label: 'Agent', render: (a) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Avatar sx={{ width: 32, height: 32, bgcolor: '#8B5CF6' }}>
-            <AgentIcon fontSize="small" />
+            <PersonIcon fontSize="small" />
           </Avatar>
-          {a.rider_name || 'N/A'}
+          <Typography variant="body2" noWrap>{a.rider_name || 'N/A'}</Typography>
         </Box>
       )},
       { key: 'referral_code', label: 'Referral Code', render: (a) => (
-        <Typography fontWeight="bold" sx={{ fontFamily: 'monospace' }}>{a.referral_code}</Typography>
+        <Typography fontWeight="bold" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{a.referral_code}</Typography>
       )},
       { key: 'total_referrals', label: 'Referrals', render: (a) => a.total_referrals || 0 },
       { key: 'total_commission', label: 'Total Commission', render: (a) => (
@@ -1656,9 +1704,8 @@ const SuperAdminDashboard = () => {
       { key: 'created_at', label: 'Joined', render: (a) => new Date(a.created_at).toLocaleDateString() },
     ];
 
-    // Agent Stats Summary
     return (
-      <Box sx={{ p: isMobile ? 2 : 3 }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
         {/* Agent Stats Cards */}
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[
@@ -1669,15 +1716,15 @@ const SuperAdminDashboard = () => {
           ].map((stat, index) => (
             <Grid item xs={6} sm={3} key={index}>
               <StatCard bgcolor={stat.color}>
-                <CardContent>
+                <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <Box>
-                      <Typography variant="caption" sx={{ opacity: 0.9 }}>{stat.label}</Typography>
-                      <Typography variant="h6" fontWeight="bold">
+                      <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.7rem' }}>{stat.label}</Typography>
+                      <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                         {stat.value}
                       </Typography>
                     </Box>
-                    <stat.icon />
+                    <stat.icon sx={{ fontSize: { xs: 24, sm: 28 }, opacity: 0.9 }} />
                   </Box>
                 </CardContent>
               </StatCard>
@@ -1702,6 +1749,7 @@ const SuperAdminDashboard = () => {
         maxWidth="md"
         fullWidth
         fullScreen={isMobile}
+        TransitionComponent={Slide}
       >
         <DialogTitle sx={{ bgcolor: '#0025DD', color: 'white' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1713,7 +1761,7 @@ const SuperAdminDashboard = () => {
             </IconButton>
           </Box>
         </DialogTitle>
-        <DialogContent sx={{ p: 3 }}>
+        <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
               <Box sx={{ textAlign: 'center' }}>
@@ -1736,43 +1784,43 @@ const SuperAdminDashboard = () => {
             </Grid>
             <Grid item xs={12} md={8}>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Email</Typography>
                   <Typography variant="body2">{rider.email || 'N/A'}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Phone</Typography>
                   <Typography variant="body2">{rider.phone_number || 'N/A'}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Rider Type</Typography>
                   <Typography variant="body2">{rider.rider_type || 'N/A'}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Vehicle Type</Typography>
                   <Typography variant="body2">{rider.vehicle_type || 'N/A'}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">License Plate</Typography>
                   <Typography variant="body2">{rider.license_plate || 'N/A'}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Total Trips</Typography>
                   <Typography variant="body2" fontWeight="bold">{rider.total_trips || 0}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Total Earnings</Typography>
                   <Typography variant="body2" fontWeight="bold" color="#10B981">
                     UGX {formatCurrency(rider.total_earnings)}
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="caption" color="text.secondary">Joined</Typography>
                   <Typography variant="body2">{new Date(rider.created_at).toLocaleDateString()}</Typography>
                 </Grid>
                 {rider.is_agent && (
                   <Grid item xs={12}>
-                    <Alert severity="info" sx={{ mt: 1 }}>
+                    <Alert severity="info" sx={{ mt: 1, borderRadius: 2 }}>
                       This rider is also a Rider Agent
                     </Alert>
                   </Grid>
@@ -1781,15 +1829,15 @@ const SuperAdminDashboard = () => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions sx={{ p: 2, borderTop: '1px solid #e0e0e0' }}>
+        <DialogActions sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           <Button onClick={() => setProfileDialogOpen(false)}>Close</Button>
-          <StyledButton 
+          <ActionButton 
             variant="contained"
             sx={{ bgcolor: '#0025DD' }}
             startIcon={<EditIcon />}
           >
             Edit Profile
-          </StyledButton>
+          </ActionButton>
         </DialogActions>
       </Dialog>
     );
@@ -1803,6 +1851,7 @@ const SuperAdminDashboard = () => {
       maxWidth="sm"
       fullWidth
       fullScreen={isMobile}
+      TransitionComponent={Slide}
     >
       <DialogTitle sx={{ bgcolor: '#0025DD', color: 'white' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1814,7 +1863,7 @@ const SuperAdminDashboard = () => {
           </IconButton>
         </Box>
       </DialogTitle>
-      <DialogContent sx={{ p: 3 }}>
+      <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12}>
             <TextField
@@ -1904,23 +1953,23 @@ const SuperAdminDashboard = () => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ p: 2, borderTop: '1px solid #e0e0e0' }}>
+      <DialogActions sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
         <Button onClick={() => setContactDialogOpen(false)}>Cancel</Button>
-        <StyledButton 
+        <ActionButton 
           variant="contained"
           sx={{ bgcolor: '#0025DD' }}
           onClick={handleSaveContact}
           disabled={contactLoading}
         >
-          {contactLoading ? 'Saving...' : 'Save Contact'}
-        </StyledButton>
+          {contactLoading ? <CircularProgress size={20} /> : 'Save Contact'}
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );
 
   // ============ MAIN RENDER ============
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', bgcolor: '#F8FAFC', minHeight: '100vh' }}>
       {renderSidebar()}
       
       <MainContent>
@@ -1929,17 +1978,23 @@ const SuperAdminDashboard = () => {
           <Box sx={{ 
             p: 2, 
             bgcolor: 'white', 
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
             display: 'flex',
             alignItems: 'center',
-            gap: 2
+            justifyContent: 'space-between',
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
           }}>
             <IconButton onClick={() => setMobileSidebarOpen(true)}>
-              <DashboardIcon />
+              <MenuIcon />
             </IconButton>
             <Typography variant="h6" fontWeight="bold" color="#0025DD">
               Enfuna Admin
             </Typography>
+            <IconButton onClick={handleRefresh} disabled={refreshing}>
+              {refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
+            </IconButton>
           </Box>
         )}
         
@@ -1958,13 +2013,13 @@ const SuperAdminDashboard = () => {
                   <Avatar sx={{ width: 32, height: 32, bgcolor: '#0025DD' }}>
                     <PersonIcon fontSize="small" />
                   </Avatar>
-                  {r.full_names}
+                  <Typography variant="body2" noWrap>{r.full_names}</Typography>
                 </Box>
               )},
               { key: 'email', label: 'Email' },
               { key: 'phone_number', label: 'Phone' },
               { key: 'status', label: 'Status', render: (r) => (
-                <Chip label={r.status} size="small" sx={getStatusChipSx(r.status)} />
+                <StatusChip status={r.status} label={r.status} />
               )},
               { key: 'total_trips', label: 'Trips' },
             ], 'rider')}
@@ -1978,7 +2033,7 @@ const SuperAdminDashboard = () => {
                 <Chip label={t.payment_method} size="small" sx={{ textTransform: 'capitalize' }} />
               )},
               { key: 'status', label: 'Status', render: (t) => (
-                <Chip label={t.status} size="small" sx={getStatusChipSx(t.status)} />
+                <StatusChip status={t.status} label={t.status} />
               )},
             ], 'trip')}
             
@@ -1991,7 +2046,7 @@ const SuperAdminDashboard = () => {
                 <Chip label={d.payment_method} size="small" sx={{ textTransform: 'capitalize' }} />
               )},
               { key: 'status', label: 'Status', render: (d) => (
-                <Chip label={d.status} size="small" sx={getStatusChipSx(d.status)} />
+                <StatusChip status={d.status} label={d.status} />
               )},
             ], 'delivery')}
             
@@ -2016,7 +2071,7 @@ const SuperAdminDashboard = () => {
               { key: 'total_pool', label: 'Pool', render: (g) => `UGX ${formatCurrency(g.total_pool)}` },
               { key: 'is_public', label: 'Visibility', render: (g) => (
                 <Chip label={g.is_public ? 'Public' : 'Private'} size="small" 
-                  sx={{ bgcolor: g.is_public ? '#E8FFF0' : '#F3F4F6' }} />
+                  sx={{ bgcolor: g.is_public ? alpha('#10B981', 0.1) : alpha('#6B7280', 0.1) }} />
               )},
             ], 'group')}
             
@@ -2039,7 +2094,11 @@ const SuperAdminDashboard = () => {
       </MainContent>
 
       {/* Mobile Sidebar Drawer */}
-      <Drawer open={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)}>
+      <Drawer 
+        open={mobileSidebarOpen} 
+        onClose={() => setMobileSidebarOpen(false)}
+        sx={{ '& .MuiDrawer-paper': { width: 280 } }}
+      >
         {renderSidebar()}
       </Drawer>
 
@@ -2058,14 +2117,22 @@ const SuperAdminDashboard = () => {
       {/* Contact Dialog */}
       {renderContactDialog()}
 
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
+
       {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        TransitionComponent={Slide}
       >
-        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert 
+          severity={snackbar.severity} 
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          sx={{ borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
