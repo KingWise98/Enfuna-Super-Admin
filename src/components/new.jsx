@@ -64,11 +64,14 @@ import Collapse from '@mui/material/Collapse';
 import Skeleton from '@mui/material/Skeleton';
 
 // ==================== MUI ICONS - ORGANIZED BY CATEGORY ====================
+// Navigation Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+// Transport Icons
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -77,12 +80,16 @@ import TwoWheelerIcon from '@mui/icons-material/TwoWheeler';
 import ElectricBikeIcon from '@mui/icons-material/ElectricBike';
 import MotorcycleIcon from '@mui/icons-material/BikeScooterOutlined';
 import PedalBikeIcon from '@mui/icons-material/PedalBike';
+
+// People Icons
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+
+// Financial Icons
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import WalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -93,6 +100,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import SavingsIcon from '@mui/icons-material/Savings';
 import MoneyIcon from '@mui/icons-material/Money';
+
+// Status & Action Icons
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import BlockIcon from '@mui/icons-material/Block';
@@ -104,6 +113,8 @@ import SecurityIcon from '@mui/icons-material/Security';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
+
+// Utility Icons
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -116,6 +127,8 @@ import ShareIcon from '@mui/icons-material/Share';
 import PrintIcon from '@mui/icons-material/Print';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
+// Detail & View Icons
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EditIcon from '@mui/icons-material/Edit';
@@ -126,6 +139,8 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+
+// Feature Icons
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -148,10 +163,12 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
 import PendingIcon from '@mui/icons-material/Pending';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/Circle';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+
+// Uganda Specific Icons
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import NightsStayIcon from '@mui/icons-material/NightsStay';
 import CelebrationIcon from '@mui/icons-material/Celebration';
@@ -972,15 +989,15 @@ const DUMMY_CHAT_MESSAGES = [
   { id: 'chat6', dispute_id: 'DSP-002', sender: 'system', sender_name: 'System', message: 'Ticket created. Priority: Medium', timestamp: '2024-03-25T10:30:10' },
 ];
 
-// Chart Data for Analytics - Enhanced with more data points
+// Chart Data for Analytics
 const WEEKLY_TRIPS_DATA = [
-  { name: 'Mon', trips: 145, revenue: 2175000, deliveries: 32, expenses: 350000 },
-  { name: 'Tue', trips: 167, revenue: 2505000, deliveries: 38, expenses: 380000 },
-  { name: 'Wed', trips: 189, revenue: 2835000, deliveries: 41, expenses: 420000 },
-  { name: 'Thu', trips: 156, revenue: 2340000, deliveries: 35, expenses: 390000 },
-  { name: 'Fri', trips: 178, revenue: 2670000, deliveries: 44, expenses: 460000 },
-  { name: 'Sat', trips: 210, revenue: 3150000, deliveries: 52, expenses: 550000 },
-  { name: 'Sun', trips: 134, revenue: 2010000, deliveries: 28, expenses: 280000 },
+  { name: 'Mon', trips: 145, revenue: 2175000, deliveries: 32 },
+  { name: 'Tue', trips: 167, revenue: 2505000, deliveries: 38 },
+  { name: 'Wed', trips: 189, revenue: 2835000, deliveries: 41 },
+  { name: 'Thu', trips: 156, revenue: 2340000, deliveries: 35 },
+  { name: 'Fri', trips: 178, revenue: 2670000, deliveries: 44 },
+  { name: 'Sat', trips: 210, revenue: 3150000, deliveries: 52 },
+  { name: 'Sun', trips: 134, revenue: 2010000, deliveries: 28 },
 ];
 
 const MONTHLY_REVENUE_DATA = [
@@ -1579,6 +1596,7 @@ const SuperAdminDashboard = () => {
 
   // Agent Management Functions
   const handleApproveAgent = (application) => {
+    // Create new agent from application
     const newAgent = {
       id: `AGT-00${agents.length + 1}`,
       rider_name: application.rider_name,
@@ -1597,6 +1615,7 @@ const SuperAdminDashboard = () => {
     };
     setAgents([...agents, newAgent]);
     setAgentApplications(agentApplications.filter(app => app.id !== application.id));
+    // Update rider to be agent
     setRiders(prevRiders =>
       prevRiders.map(rider =>
         rider.id === application.rider_id
@@ -1614,6 +1633,7 @@ const SuperAdminDashboard = () => {
   
   const handleRemoveAgent = (agent) => {
     setAgents(agents.filter(a => a.id !== agent.id));
+    // Update rider to not be agent
     setRiders(prevRiders =>
       prevRiders.map(rider =>
         rider.id === agent.rider_id
@@ -1677,6 +1697,7 @@ const SuperAdminDashboard = () => {
         : d
     ));
     
+    // Also add to chat messages
     setChatMessages([...chatMessages, {
       id: `chat${Date.now()}`,
       dispute_id: selectedDispute.id,
@@ -1735,6 +1756,7 @@ const SuperAdminDashboard = () => {
     try {
       const doc = new jsPDF('landscape');
       
+      // Header
       doc.setFillColor(0, 37, 221);
       doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
       doc.setTextColor(255, 255, 255);
@@ -1743,14 +1765,17 @@ const SuperAdminDashboard = () => {
       doc.setFontSize(12);
       doc.text('Rider Management System', 14, 32);
       
+      // Title
       doc.setTextColor(0, 37, 221);
       doc.setFontSize(16);
       doc.text(title, 14, 55);
       
+      // Date
       doc.setTextColor(100);
       doc.setFontSize(9);
       doc.text(`Generated: ${new Date().toLocaleString('en-UG', { timeZone: 'Africa/Kampala' })}`, 14, 63);
       
+      // Table
       autoTable(doc, {
         startY: 70,
         head: [columns.map(c => c.header)],
@@ -1771,6 +1796,7 @@ const SuperAdminDashboard = () => {
         margin: { top: 10 }
       });
       
+      // Footer
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
@@ -1889,470 +1915,1258 @@ const SuperAdminDashboard = () => {
     { label: 'Withdrawals', icon: PaymentIcon, tab: 11, badge: withdrawals.filter(w => w.status === 'pending').length, permission: 'canManageWallets' },
   ];
 
-  // ==================== ENHANCED ANALYTICS TAB ====================
-  const renderAnalyticsTab = () => (
-    <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 }, width: '100%', overflowX: 'hidden' }}>
-      {/* Header with Title and Actions */}
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: { xs: 'column', sm: 'row' }, 
-        justifyContent: 'space-between', 
-        alignItems: { xs: 'flex-start', sm: 'center' }, 
-        gap: 2, 
-        mb: 3 
-      }}>
-        <Box>
-          <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' }, color: '#1E293B' }}>
-            Analytics & Insights Dashboard
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, mt: 0.5 }}>
-            Monitor key performance metrics, revenue trends, and business intelligence data
+  // ==================== MOBILE RESPONSIVE DETAILS MODAL ====================
+  const renderDetailsModal = () => {
+    if (!selectedItem) return null;
+
+    const renderRiderDetails = () => (
+      <Box>
+        {/* Header Section */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid',
+          borderColor: 'divider'
+        }}>
+          <Avatar sx={{ 
+            width: { xs: 60, sm: 72 }, 
+            height: { xs: 60, sm: 72 }, 
+            bgcolor: '#0025DD', 
+            fontSize: { xs: 24, sm: 28 }, 
+            fontWeight: 'bold' 
+          }}>
+            {selectedItem.full_names?.charAt(0)}
+          </Avatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.full_names}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap" useFlexGap>
+              <Chip 
+                label={selectedItem.status} 
+                size="small" 
+                sx={{ bgcolor: alpha(getStatusColor(selectedItem.status), 0.1), color: getStatusColor(selectedItem.status), fontWeight: 600 }}
+              />
+              {selectedItem.is_verified && (
+                <Chip 
+                  icon={<VerifiedUserIcon sx={{ fontSize: 14 }} />}
+                  label="Verified" 
+                  size="small" 
+                  sx={{ bgcolor: alpha('#10B981', 0.1), color: '#10B981', fontWeight: 600 }}
+                />
+              )}
+              {selectedItem.is_agent && (
+                <Chip 
+                  icon={<AdminPanelSettingsIcon sx={{ fontSize: 14 }} />}
+                  label="Agent" 
+                  size="small" 
+                  sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }}
+                />
+              )}
+            </Stack>
+          </Box>
+        </Box>
+
+        {/* Details Grid Layout */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Personal Information" icon={PersonIcon} color="#0025DD">
+              <DetailField label="Full Name" value={selectedItem.full_names} icon={PersonIcon} color="#0025DD" />
+              <DetailField label="Email Address" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
+              <DetailField label="Phone Number" value={selectedItem.phone_number} icon={PhoneIcon} color="#10B981" />
+              <DetailField label="Member Since" value={new Date(selectedItem.created_at).toLocaleDateString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Vehicle Information" icon={MotorcycleIcon} color="#F59E0B">
+              <DetailField label="Vehicle Type" value={selectedItem.vehicle_type} icon={DirectionsBikeIcon} color="#F59E0B" />
+              <DetailField label="Motorcycle Model" value={selectedItem.motorcycle_model} icon={TwoWheelerIcon} color="#8B5CF6" />
+              <DetailField label="License Plate" value={selectedItem.license_plate} icon={LocalShippingIcon} color="#06B6D4" />
+              <DetailField label="Rider Type" value={selectedItem.rider_type?.replace('_', ' ')} icon={WorkIcon} color="#EC4899" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Location Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Stage" value={selectedItem.stage} icon={LocationOnIcon} color="#EF4444" />
+              <DetailField label="Division" value={selectedItem.division} icon={BusinessIcon} color="#8B5CF6" />
+              <DetailField label="District" value={selectedItem.district} icon={FlagIcon} color="#0025DD" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
+              <Grid container spacing={1.5}>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                      {selectedItem.total_trips?.toLocaleString() || '0'}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Total Trips
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                      UGX {formatCurrency(selectedItem.total_earnings)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Total Earnings
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                      <StarIcon sx={{ fontSize: { xs: 16, sm: 18 }, color: '#F59E0B' }} />
+                      <Typography variant="h6" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                        {selectedItem.rating || '0.0'}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Rating
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                      {selectedItem.total_deliveries || '0'}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Deliveries
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+        </Grid>
+
+        {hasPermission('canManageRiders') && (
+          <>
+            <Divider sx={{ my: { xs: 2, sm: 3 } }} />
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2, 
+              justifyContent: 'flex-end',
+              flexDirection: { xs: 'column', sm: 'row' },
+            }}>
+              <ActionButton
+                variant="contained"
+                fullWidth={isMobile}
+                startIcon={selectedItem.status === 'active' ? <BlockIcon /> : <CheckIcon />}
+                onClick={() => {
+                  handleBlockUser(selectedItem, 'rider');
+                  handleCloseDetailsModal();
+                }}
+                sx={{ bgcolor: selectedItem.status === 'active' ? '#EF4444' : '#10B981' }}
+              >
+                {selectedItem.status === 'active' ? 'Block User' : 'Unblock User'}
+              </ActionButton>
+              <ActionButton
+                variant="outlined"
+                fullWidth={isMobile}
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  handleDeleteUser(selectedItem, 'rider');
+                  handleCloseDetailsModal();
+                }}
+                sx={{ borderColor: '#EF4444', color: '#EF4444' }}
+              >
+                Delete User
+              </ActionButton>
+            </Box>
+          </>
+        )}
+      </Box>
+    );
+
+    const renderDisputeDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#EF4444', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <SupportAgentIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#EF4444' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.ticket_number}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.title}</Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
+              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
+              <Chip 
+                label={selectedItem.priority} 
+                size="small" 
+                sx={{ bgcolor: selectedItem.priority === 'high' ? alpha('#EF4444', 0.1) : alpha('#F59E0B', 0.1), color: selectedItem.priority === 'high' ? '#991B1B' : '#92400E' }}
+              />
+              <Chip label={selectedItem.category} size="small" />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Dispute Information" icon={InfoIcon} color="#EF4444">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
+              <DetailField label="Trip ID" value={selectedItem.trip_id} icon={DirectionsBikeIcon} color="#F59E0B" />
+              <DetailField label="Created" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.resolved_at && (
+                <DetailField label="Resolved" value={new Date(selectedItem.resolved_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Description" icon={DescriptionIcon} color="#6366F1">
+              <Typography variant="body2" sx={{ p: 1, bgcolor: '#F8FAFC', borderRadius: 2 }}>
+                {selectedItem.description}
+              </Typography>
+              {selectedItem.resolution_notes && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle2" fontWeight="bold" color="#10B981">Resolution Notes:</Typography>
+                  <Typography variant="body2" sx={{ p: 1, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    {selectedItem.resolution_notes}
+                  </Typography>
+                </Box>
+              )}
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12}>
+            <DetailSection title="Chat History" icon={ChatIcon} color="#0025DD">
+              <Box sx={{ maxHeight: 300, overflowY: 'auto', p: 1 }}>
+                {selectedItem.messages?.map((msg) => (
+                  <ChatBubble key={msg.id} isUser={msg.sender === 'admin'}>
+                    <Typography variant="caption" className="message-sender">
+                      {msg.sender_name} • {new Date(msg.timestamp).toLocaleTimeString()}
+                    </Typography>
+                    <Box className="message-content">
+                      <Typography variant="body2">{msg.message}</Typography>
+                    </Box>
+                  </ChatBubble>
+                ))}
+              </Box>
+              {hasPermission('canManageDisputes') && selectedItem.status !== 'resolved' && (
+                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    placeholder="Type a reply..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                  />
+                  <IconButton onClick={handleSendChatMessage} sx={{ bgcolor: '#0025DD', color: 'white', borderRadius: 2 }}>
+                    <SendIcon />
+                  </IconButton>
+                </Box>
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+
+        {hasPermission('canManageDisputes') && selectedItem.status !== 'resolved' && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <ActionButton
+                variant="outlined"
+                startIcon={<PendingIcon />}
+                onClick={() => handleUpdateDisputeStatus(selectedItem, 'investigating')}
+                sx={{ borderColor: '#F59E0B', color: '#F59E0B' }}
+              >
+                Mark Investigating
+              </ActionButton>
+              <ActionButton
+                variant="contained"
+                startIcon={<CheckCircleOutlineIcon />}
+                onClick={() => {
+                  const resolution = prompt('Enter resolution notes:');
+                  if (resolution) handleResolveDispute(selectedItem, resolution);
+                }}
+                sx={{ bgcolor: '#10B981' }}
+              >
+                Mark Resolved
+              </ActionButton>
+            </Box>
+          </>
+        )}
+      </Box>
+    );
+
+    // Other detail renderers (trip, expense, etc.) remain similar
+    const renderTripDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <DirectionsBikeIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
+              <DetailField label="Destination" value={selectedItem.destination} icon={LocationOnIcon} color="#EF4444" />
+              <DetailField label="Distance" value={selectedItem.distance} icon={LocalShippingIcon} color="#6366F1" />
+              <DetailField label="Duration" value={selectedItem.duration} icon={ScheduleIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.trip_fare)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Trip Fare</Typography>
+              </Box>
+              <DetailField label="Payment Method" value={selectedItem.payment_method?.replace('_', ' ')} icon={PaymentIcon} color="#6366F1" />
+              <DetailField label="Payment Provider" value={selectedItem.payment_provider || 'N/A'} icon={CreditCardIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
+              <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.completed_at && (
+                <DetailField label="Completed At" value={new Date(selectedItem.completed_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderAgentDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#6366F1', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <PersonAddIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#6366F1' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.rider_name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
+              <Chip label={selectedItem.tier} size="small" sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }} />
+              <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" status={selectedItem.is_active ? 'active' : 'inactive'} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Agent Information" icon={InfoIcon} color="#6366F1">
+              <DetailField label="Referral Code" value={selectedItem.referral_code} icon={SaveIcon} color="#6366F1" />
+              <DetailField label="Tier" value={selectedItem.tier} icon={StarsIcon} color="#F59E0B" />
+              <DetailField label="Region" value={selectedItem.region} icon={LocationOnIcon} color="#EF4444" />
+              <DetailField label="Commission Rate" value={`${selectedItem.commission_rate || 5}%`} icon={AttachMoneyIcon} color="#10B981" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
+              <Grid container spacing={1.5}>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#6366F1">{selectedItem.total_referrals}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Referrals</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981">{selectedItem.active_referrals}</Typography>
+                    <Typography variant="caption" color="text.secondary">Active Referrals</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_commission)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Commission</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.available_commission)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Available Commission</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+        </Grid>
+
+        {hasPermission('canManageAgents') && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', flexDirection: { xs: 'column', sm: 'row' } }}>
+              <ActionButton
+                variant="outlined"
+                startIcon={<AttachMoneyIcon />}
+                onClick={() => setAdjustCommissionDialog({ open: true, agent: selectedItem })}
+                sx={{ borderColor: '#F59E0B', color: '#F59E0B' }}
+              >
+                Adjust Commission
+              </ActionButton>
+              <ActionButton
+                variant="outlined"
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  handleRemoveAgent(selectedItem);
+                  handleCloseDetailsModal();
+                }}
+                sx={{ borderColor: '#EF4444', color: '#EF4444' }}
+              >
+                Remove Agent
+              </ActionButton>
+            </Box>
+          </>
+        )}
+      </Box>
+    );
+
+    const renderGroupDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#8B5CF6', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <GroupsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#8B5CF6' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.name}
+            </Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
+              <Chip label={selectedItem.group_type} size="small" sx={{ bgcolor: alpha('#8B5CF6', 0.1), color: '#8B5CF6', fontWeight: 600 }} />
+              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <DetailSection title="Group Information" icon={InfoIcon} color="#8B5CF6">
+              <DetailField label="Description" value={selectedItem.description} icon={DescriptionIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Membership" icon={PeopleIcon} color="#0025DD">
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {selectedItem.member_count} / {selectedItem.max_members} Members
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {Math.round((selectedItem.member_count / selectedItem.max_members) * 100)}% Full
+                  </Typography>
+                </Box>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(selectedItem.member_count / selectedItem.max_members) * 100} 
+                  sx={{ 
+                    height: 8, 
+                    borderRadius: 4, 
+                    bgcolor: alpha('#0025DD', 0.1),
+                    '& .MuiLinearProgress-bar': { 
+                      bgcolor: '#0025DD',
+                      borderRadius: 4 
+                    } 
+                  }} 
+                />
+              </Box>
+              <DetailField label="Admin" value={selectedItem.admin_rider} icon={AdminPanelSettingsIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.total_pool)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Total Pool</Typography>
+              </Box>
+              <DetailField label="Contribution" value={`UGX ${formatCurrency(selectedItem.contrib_amount)}`} icon={PaymentIcon} color="#10B981" />
+              <DetailField label="Frequency" value={selectedItem.contrib_frequency} icon={ScheduleIcon} color="#F59E0B" />
+              <DetailField label="Visibility" value={selectedItem.is_public ? 'Public Group' : 'Private Group'} icon={selectedItem.is_public ? VisibilityIcon : VisibilityOffIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+        </Grid>
+
+        {hasPermission('canManageGroups') && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', flexDirection: { xs: 'column', sm: 'row' } }}>
+              <ActionButton
+                variant="contained"
+                startIcon={selectedItem.status === 'active' ? <BlockIcon /> : <CheckIcon />}
+                onClick={() => {
+                  handleBlockUser(selectedItem, 'group');
+                  handleCloseDetailsModal();
+                }}
+                sx={{ bgcolor: selectedItem.status === 'active' ? '#EF4444' : '#10B981' }}
+              >
+                {selectedItem.status === 'active' ? 'Suspend Group' : 'Activate Group'}
+              </ActionButton>
+              <ActionButton
+                variant="outlined"
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  handleDeleteUser(selectedItem, 'group');
+                  handleCloseDetailsModal();
+                }}
+                sx={{ borderColor: '#EF4444', color: '#EF4444' }}
+              >
+                Delete Group
+              </ActionButton>
+            </Box>
+          </>
+        )}
+      </Box>
+    );
+
+    const renderExpenseDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#EF4444', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <ReceiptIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#EF4444' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Expense Information" icon={InfoIcon} color="#0025DD">
+              <DetailField label="Category" value={selectedItem.category} icon={FolderIcon} color="#0025DD" />
+              <DetailField label="Expense Type" value={selectedItem.expense_type} icon={BuildIcon} color="#8B5CF6" />
+              <DetailField label="Description" value={selectedItem.description} icon={DescriptionIcon} color="#6366F1" />
+              <DetailField label="Date" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#EF4444">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#EF4444" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.amount)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Expense Amount</Typography>
+              </Box>
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              {selectedItem.approved_by && (
+                <DetailField label="Approved By" value={selectedItem.approved_by} icon={VerifiedUserIcon} color="#10B981" />
+              )}
+              {selectedItem.rejection_reason && (
+                <DetailField label="Rejection Reason" value={selectedItem.rejection_reason} icon={WarningIcon} color="#EF4444" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderContactDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <ContactsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: getTypeColor(selectedItem.type) }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.full_name}
+            </Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
+              <Chip label={selectedItem.type} size="small" sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), color: getTypeColor(selectedItem.type), fontWeight: 600 }} />
+              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Personal Information" icon={PersonIcon} color={getTypeColor(selectedItem.type)}>
+              <DetailField label="Full Name" value={selectedItem.full_name} icon={PersonIcon} color={getTypeColor(selectedItem.type)} />
+              <DetailField label="Email" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
+              <DetailField label="Phone" value={selectedItem.phone} icon={PhoneIcon} color="#10B981" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Business Information" icon={BusinessIcon} color="#8B5CF6">
+              <DetailField label="Business Name" value={selectedItem.bussiness_name} icon={BusinessIcon} color="#8B5CF6" />
+              <DetailField label="Location" value={selectedItem.location} icon={LocationOnIcon} color="#EF4444" />
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2, mt: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <StarsIcon sx={{ color: '#F59E0B' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                    {selectedItem.loyalty_points || 0}
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Loyalty Points</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderWalletDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#06B6D4', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <AccountBalanceIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#06B6D4' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              Wallet: {selectedItem.rider_name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" sx={{ mt: 0.5 }} status={selectedItem.is_active ? 'active' : 'inactive'} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <DetailSection title="Balance Overview" icon={AccountBalanceWalletIcon} color="#06B6D4">
+              <Grid container spacing={1.5}>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#06B6D4', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#06B6D4" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.balance)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Total Balance</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.available_balance)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Available</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.reserved_balance)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Reserved</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      {selectedItem.currency}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Currency</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Transaction Summary" icon={TrendingUpIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <TrendingUpIcon sx={{ color: '#10B981' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_deposits)}</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Total Deposits</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Withdrawal Summary" icon={TrendingDownIcon} color="#EF4444">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <TrendingDownIcon sx={{ color: '#EF4444' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#EF4444">UGX {formatCurrency(selectedItem.total_withdrawals)}</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Total Withdrawals</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderDeliveryDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <LocalShippingIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Package Details" icon={FolderIcon} color="#F59E0B">
+              <DetailField label="Package Type" value={selectedItem.package_type} icon={FolderIcon} color="#F59E0B" />
+              <DetailField label="Package Weight" value={selectedItem.package_weight} icon={LocalShippingIcon} color="#06B6D4" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
+              <DetailField label="Drop-off Location" value={selectedItem.drop_off_location} icon={LocationOnIcon} color="#EF4444" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.delivery_fee)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Delivery Fee</Typography>
+              </Box>
+              <DetailField label="Payment Method" value={selectedItem.payment_method} icon={PaymentIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
+              <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.completed_at && (
+                <DetailField label="Completed At" value={new Date(selectedItem.completed_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderWithdrawalDetails = () => (
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <PaymentIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Withdrawal Information" icon={InfoIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Payment Method" value={selectedItem.payment_method?.replace('_', ' ')} icon={PaymentIcon} color="#6366F1" />
+              <DetailField label="Phone Number" value={selectedItem.phone_number} icon={PhoneIcon} color="#10B981" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.amount)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Withdrawal Amount</Typography>
+              </Box>
+              <DetailField label="Requested Date" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.approved_at && (
+                <DetailField label="Approved Date" value={new Date(selectedItem.approved_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+              {selectedItem.rejection_reason && (
+                <DetailField label="Rejection Reason" value={selectedItem.rejection_reason} icon={WarningIcon} color="#EF4444" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    switch (modalType) {
+      case 'rider': return renderRiderDetails();
+      case 'trip': return renderTripDetails();
+      case 'expense': return renderExpenseDetails();
+      case 'contact': return renderContactDetails();
+      case 'wallet': return renderWalletDetails();
+      case 'group': return renderGroupDetails();
+      case 'agent': return renderAgentDetails();
+      case 'delivery': return renderDeliveryDetails();
+      case 'withdrawal': return renderWithdrawalDetails();
+      case 'dispute': return renderDisputeDetails();
+      default: return null;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      active: '#10B981',
+      completed: '#10B981',
+      approved: '#10B981',
+      resolved: '#10B981',
+      pending: '#F59E0B',
+      investigating: '#6366F1',
+      escalated: '#EF4444',
+      inactive: '#6B7280',
+      suspended: '#EF4444',
+      cancelled: '#EF4444',
+      rejected: '#EF4444',
+    };
+    return colors[status?.toLowerCase()] || '#6B7280';
+  };
+
+  const getTypeColor = (type) => {
+    const colors = {
+      customer: '#0025DD',
+      supplier: '#F59E0B',
+      employee: '#10B981',
+      savings: '#8B5CF6',
+      welfare: '#EC4899',
+      investment: '#06B6D4',
+    };
+    return colors[type] || '#64748B';
+  };
+
+  // ============ RENDER SIDEBAR ============
+  const renderSidebar = () => (
+    <SidebarContainer className={mobileSidebarOpen ? 'open' : ''}>
+      <GradientCard gradient="linear-gradient(135deg, #0025DD 0%, #4F46E5 100%)" sx={{ borderRadius: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+          <MotorcycleIcon sx={{ fontSize: 28 }} />
+          <Typography variant="h5" fontWeight="bold">
+            Enfuna
           </Typography>
         </Box>
-        <ActionButton
-          variant="outlined"
-          startIcon={<FileDownloadIcon />}
-          onClick={() => exportToPDF([...WEEKLY_TRIPS_DATA, ...MONTHLY_REVENUE_DATA], 'Analytics Report', [{ key: 'name', header: 'Period' }, { key: 'trips', header: 'Trips' }, { key: 'revenue', header: 'Revenue (UGX)' }])}
-          sx={{ borderColor: '#0025DD', color: '#0025DD' }}
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem' }}>
+          System Admin
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', mt: 0.5 }}>
+          🇺🇬 Kampala, Uganda
+        </Typography>
+      </GradientCard>
+      
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Avatar 
+          sx={{ 
+            bgcolor: '#0025DD', 
+            width: 40, 
+            height: 40,
+            fontSize: '1rem',
+            fontWeight: 'bold'
+          }}
         >
-          Export Report
+          {user.full_names?.charAt(0) || 'A'}
+        </Avatar>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="body2" fontWeight="bold" noWrap>
+            {user.full_names}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" noWrap>
+            {currentUserRole.replace('_', ' ').toUpperCase()}
+          </Typography>
+        </Box>
+        <Tooltip title="Switch Role (Demo)">
+          <IconButton size="small" onClick={() => {
+            const roles = ['super_admin', 'admin', 'agent'];
+            const currentIndex = roles.indexOf(currentUserRole);
+            const nextRole = roles[(currentIndex + 1) % roles.length];
+            changeUserRole(nextRole);
+          }}>
+            <AdminPanelSettingsIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      
+      <Divider />
+      
+      <List sx={{ flex: 1, px: 1, py: 2 }}>
+        {sidebarItems.map((item) => {
+          const isActive = activeTab === item.tab;
+          // Check permission for this item
+          if (item.permission && !hasPermission(item.permission)) return null;
+          
+          return (
+            <ListItem 
+              key={item.tab}
+              onClick={() => {
+                setActiveTab(item.tab);
+                setMobileSidebarOpen(false);
+              }}
+              sx={{ 
+                borderRadius: 2, 
+                mb: 0.5,
+                cursor: 'pointer',
+                bgcolor: isActive ? alpha('#0025DD', 0.08) : 'transparent',
+                borderLeft: isActive ? '3px solid #0025DD' : '3px solid transparent',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: alpha('#0025DD', 0.04),
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <item.icon sx={{ 
+                  color: isActive ? '#0025DD' : '#64748B',
+                  fontSize: 20,
+                  transition: 'color 0.2s'
+                }} />
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.label} 
+                primaryTypographyProps={{ 
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? '#0025DD' : '#334155',
+                  fontSize: '0.85rem',
+                }}
+              />
+              {item.badge > 0 && (
+                <Box
+                  sx={{
+                    bgcolor: isActive ? '#0025DD' : '#EF4444',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 22,
+                    height: 22,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.7rem',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {item.badge}
+                </Box>
+              )}
+            </ListItem>
+          );
+        })}
+      </List>
+      
+      <Box sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.08)', bgcolor: '#F8FAFC' }}>
+        <ActionButton
+          fullWidth
+          variant="outlined"
+          color="error"
+          startIcon={<LogoutIcon />}
+          sx={{ borderColor: '#DC2626', color: '#DC2626' }}
+        >
+          Logout
         </ActionButton>
       </Box>
+    </SidebarContainer>
+  );
+
+  // ============ ANALYTICS TAB ============
+  const renderAnalyticsTab = () => (
+    <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+      <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color: '#1E293B' }}>
+        Analytics & Insights
+      </Typography>
       
-      {/* Filter Row - Mobile Responsive */}
-      <Box sx={{ 
-        mb: 3, 
-        display: 'flex', 
-        gap: 1.5, 
-        flexWrap: 'wrap', 
-        justifyContent: { xs: 'center', sm: 'flex-start' },
-        '& .MuiButton-root': { px: { xs: 1.5, sm: 2 }, py: { xs: 0.5, sm: 1 }, fontSize: { xs: '0.7rem', sm: '0.8rem' } }
-      }}>
-        {['today', 'week', 'month', 'all'].map((filter) => (
-          <Button
-            key={filter}
-            variant={dateFilter.type === filter ? 'contained' : 'outlined'}
-            onClick={() => applyDateFilter(filter)}
-            sx={{ 
-              borderRadius: 20,
-              textTransform: 'capitalize',
-              ...(dateFilter.type === filter && { bgcolor: '#0025DD', '&:hover': { bgcolor: '#001DB0' } })
-            }}
-          >
-            {filter === 'today' ? 'Today' : filter === 'week' ? 'This Week' : filter === 'month' ? 'This Month' : 'All Time'}
-          </Button>
-        ))}
+      {/* Filter Row */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Button
+          variant={dateFilter.type === 'week' ? 'contained' : 'outlined'}
+          onClick={() => applyDateFilter('week')}
+          size="small"
+        >
+          This Week
+        </Button>
+        <Button
+          variant={dateFilter.type === 'month' ? 'contained' : 'outlined'}
+          onClick={() => applyDateFilter('month')}
+          size="small"
+        >
+          This Month
+        </Button>
+        <Button
+          variant={dateFilter.type === 'all' ? 'contained' : 'outlined'}
+          onClick={() => applyDateFilter('all')}
+          size="small"
+        >
+          All Time
+        </Button>
       </Box>
       
-      <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
-        {/* Revenue Trend Chart - Full width on mobile */}
+      <Grid container spacing={3}>
+        {/* Revenue Chart */}
         <Grid item xs={12} lg={8}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Revenue & Expenses Trend
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Daily breakdown for selected period
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Chip label="Revenue" size="small" sx={{ bgcolor: alpha('#0025DD', 0.1), color: '#0025DD' }} />
-                <Chip label="Expenses" size="small" sx={{ bgcolor: alpha('#EF4444', 0.1), color: '#EF4444' }} />
-              </Box>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Revenue Trend</Typography>
+              <Typography variant="caption" color="text.secondary">Daily revenue breakdown for selected period</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 300, md: 350 } }}>
+            <Box sx={{ p: 2, height: 350 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={WEEKLY_TRIPS_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                  <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0025DD" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#0025DD" stopOpacity={0.01}/>
-                    </linearGradient>
-                    <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#EF4444" stopOpacity={0.01}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} tickFormatter={(value) => `UGX ${(value / 1000).toFixed(0)}k`} />
+                <AreaChart data={WEEKLY_TRIPS_DATA}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
                   <RechartsTooltip 
-                    formatter={(value) => [`UGX ${value.toLocaleString()}`, '']}
-                    contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: { xs: 10, sm: 12 } }}
+                    formatter={(value) => `UGX ${value.toLocaleString()}`}
                   />
-                  <Legend wrapperStyle={{ fontSize: { xs: 10, sm: 12 } }} />
-                  <Area type="monotone" dataKey="revenue" stroke="#0025DD" fill="url(#colorRevenue)" strokeWidth={2} name="Revenue" />
-                  <Area type="monotone" dataKey="expenses" stroke="#EF4444" fill="url(#colorExpenses)" strokeWidth={2} name="Expenses" />
+                  <Legend />
+                  <Area type="monotone" dataKey="revenue" stroke="#0025DD" fill="#0025DD" fillOpacity={0.1} name="Revenue (UGX)" />
+                  <Area type="monotone" dataKey="expenses" stroke="#EF4444" fill="#EF4444" fillOpacity={0.1} name="Expenses (UGX)" />
                 </AreaChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
         </Grid>
         
-        {/* Trips & Deliveries Chart */}
-        <Grid item xs={12} lg={4}>
-          <StyledCard variant="chart" sx={{ height: '100%' }}>
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Trips & Deliveries
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Weekly comparison
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 300, md: 350 } }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={WEEKLY_TRIPS_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis yAxisId="left" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <RechartsTooltip contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }} />
-                  <Legend wrapperStyle={{ fontSize: { xs: 10, sm: 12 } }} />
-                  <Bar yAxisId="left" dataKey="trips" fill="#0025DD" name="Trips" radius={[4, 4, 0, 0]} />
-                  <Bar yAxisId="right" dataKey="deliveries" fill="#10B981" name="Deliveries" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Box>
-          </StyledCard>
-        </Grid>
-        
         {/* Monthly Profit Chart */}
-        <Grid item xs={12} md={6}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Monthly Profit Analysis
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Revenue vs Expenses comparison
-                </Typography>
-              </Box>
+        <Grid item xs={12} lg={4}>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Monthly Profit</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 280, md: 320 } }}>
+            <Box sx={{ p: 2, height: 350 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={MONTHLY_REVENUE_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} tickFormatter={(value) => `UGX ${(value / 1000000).toFixed(0)}M`} />
+                <BarChart data={MONTHLY_REVENUE_DATA}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
                   <RechartsTooltip 
-                    formatter={(value) => [`UGX ${value.toLocaleString()}`, '']}
-                    contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }}
+                    formatter={(value) => `UGX ${value.toLocaleString()}`}
                   />
-                  <Legend wrapperStyle={{ fontSize: { xs: 10, sm: 12 } }} />
-                  <Bar dataKey="revenue" fill="#0025DD" name="Revenue" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expenses" fill="#EF4444" name="Expenses" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="profit" fill="#10B981" name="Profit" radius={[4, 4, 0, 0]} />
+                  <Legend />
+                  <Bar dataKey="profit" fill="#10B981" name="Profit" />
+                  <Bar dataKey="expenses" fill="#EF4444" name="Expenses" />
                 </BarChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
         </Grid>
         
-        {/* Profit Trend Line Chart */}
-        <Grid item xs={12} md={6}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Profit Growth Trend
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Month-over-month profit increase
-                </Typography>
-              </Box>
+        {/* Status Distribution */}
+        <Grid item xs={12} md={4}>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Rider Status Distribution</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 280, md: 320 } }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={MONTHLY_REVENUE_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} tickFormatter={(value) => `UGX ${(value / 1000000).toFixed(0)}M`} />
-                  <RechartsTooltip 
-                    formatter={(value) => [`UGX ${value.toLocaleString()}`, 'Profit']}
-                    contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: { xs: 10, sm: 12 } }} />
-                  <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={3} dot={{ r: 4, fill: '#10B981' }} name="Profit" />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-          </StyledCard>
-        </Grid>
-        
-        {/* Status Distribution - Pie Chart */}
-        <Grid item xs={12} sm={6} md={4}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Rider Status Distribution
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 280, md: 300 } }}>
+            <Box sx={{ p: 2, height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={STATUS_DISTRIBUTION}
                     cx="50%"
                     cy="50%"
-                    innerRadius={isMobile ? 40 : 60}
-                    outerRadius={isMobile ? 60 : 90}
+                    innerRadius={60}
+                    outerRadius={100}
                     paddingAngle={5}
                     dataKey="value"
-                    label={({ name, percent }) => {
-                      const percentage = (percent * 100).toFixed(0);
-                      return isMobile && percentage < 10 ? '' : `${name}: ${percentage}%`;
-                    }}
-                    labelLine={!isMobile}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {STATUS_DISTRIBUTION.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }} />
-                  <Legend 
-                    wrapperStyle={{ fontSize: { xs: 8, sm: 10, md: 12 }, paddingTop: 10 }}
-                    layout={isMobile ? 'horizontal' : 'vertical'}
-                    align={isMobile ? 'center' : 'right'}
-                    verticalAlign={isMobile ? 'bottom' : 'middle'}
-                  />
+                  <RechartsTooltip />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
         </Grid>
         
-        {/* Payment Methods - Pie Chart */}
-        <Grid item xs={12} sm={6} md={4}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Payment Methods
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Transaction distribution
-                </Typography>
-              </Box>
+        {/* Payment Methods */}
+        <Grid item xs={12} md={4}>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Payment Methods</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 280, md: 300 } }}>
+            <Box sx={{ p: 2, height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={PAYMENT_METHODS_DATA}
                     cx="50%"
                     cy="50%"
-                    innerRadius={isMobile ? 40 : 60}
-                    outerRadius={isMobile ? 60 : 90}
+                    innerRadius={60}
+                    outerRadius={100}
                     paddingAngle={5}
                     dataKey="value"
-                    label={({ name, value }) => isMobile ? `${value}%` : `${name}: ${value}%`}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {PAYMENT_METHODS_DATA.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }} />
-                  <Legend 
-                    wrapperStyle={{ fontSize: { xs: 8, sm: 10, md: 12 }, paddingTop: 10 }}
-                    layout={isMobile ? 'horizontal' : 'vertical'}
-                    align={isMobile ? 'center' : 'right'}
-                    verticalAlign={isMobile ? 'bottom' : 'middle'}
-                  />
+                  <RechartsTooltip />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
         </Grid>
         
-        {/* Dispute Status - Pie Chart */}
-        <Grid item xs={12} sm={6} md={4}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Dispute Resolution Status
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Current open vs resolved cases
-                </Typography>
-              </Box>
+        {/* Dispute Status */}
+        <Grid item xs={12} md={4}>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Dispute Resolution Status</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 280, md: 300 } }}>
+            <Box sx={{ p: 2, height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={DISPUTE_STATUS_DATA}
                     cx="50%"
                     cy="50%"
-                    innerRadius={isMobile ? 40 : 60}
-                    outerRadius={isMobile ? 60 : 90}
+                    innerRadius={60}
+                    outerRadius={100}
                     paddingAngle={5}
                     dataKey="value"
-                    label={({ name, value }) => isMobile ? `${value}` : `${name}: ${value}`}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {DISPUTE_STATUS_DATA.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }} />
-                  <Legend 
-                    wrapperStyle={{ fontSize: { xs: 8, sm: 10, md: 12 }, paddingTop: 10 }}
-                    layout={isMobile ? 'horizontal' : 'vertical'}
-                    align={isMobile ? 'center' : 'right'}
-                    verticalAlign={isMobile ? 'bottom' : 'middle'}
-                  />
+                  <RechartsTooltip />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
         </Grid>
         
-        {/* Agent Performance Chart */}
+        {/* Agent Performance */}
         <Grid item xs={12}>
-          <StyledCard variant="chart">
-            <Box sx={{ 
-              p: { xs: 1.5, sm: 2, md: 2.5 }, 
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Box>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
-                  Top Agent Performance
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Referrals vs Commission earned
-                </Typography>
-              </Box>
+          <StyledCard>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="h6" fontWeight="bold">Top Agent Performance</Typography>
             </Box>
-            <Box sx={{ p: { xs: 1, sm: 2 }, height: { xs: 250, sm: 300, md: 350 } }}>
+            <Box sx={{ p: 2, height: 350 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={AGENT_PERFORMANCE_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis yAxisId="left" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: { xs: 8, sm: 10, md: 12 } }} tickFormatter={(value) => `UGX ${(value / 1000000).toFixed(0)}M`} />
-                  <RechartsTooltip contentStyle={{ borderRadius: 12, fontSize: { xs: 10, sm: 12 } }} />
-                  <Legend wrapperStyle={{ fontSize: { xs: 10, sm: 12 } }} />
-                  <Bar yAxisId="left" dataKey="referrals" fill="#6366F1" name="Total Referrals" radius={[4, 4, 0, 0]} />
-                  <Bar yAxisId="right" dataKey="commission" fill="#10B981" name="Total Commission (UGX)" radius={[4, 4, 0, 0]} />
+                <BarChart data={AGENT_PERFORMANCE_DATA}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis yAxisId="left" orientation="left" stroke="#6366F1" />
+                  <YAxis yAxisId="right" orientation="right" stroke="#10B981" />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="referrals" fill="#6366F1" name="Total Referrals" />
+                  <Bar yAxisId="right" dataKey="commission" fill="#10B981" name="Total Commission (UGX)" />
                 </BarChart>
               </ResponsiveContainer>
             </Box>
           </StyledCard>
-        </Grid>
-        
-        {/* KPI Summary Cards for Analytics */}
-        <Grid item xs={12}>
-          <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
-            <Grid item xs={6} sm={3}>
-              <DashboardCard sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' } }}>
-                  {dashboardStats.totalTrips.toLocaleString()}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Total Completed Trips
-                </Typography>
-              </DashboardCard>
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <DashboardCard sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' } }}>
-                  {dashboardStats.customerSatisfaction}%
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Customer Satisfaction
-                </Typography>
-              </DashboardCard>
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <DashboardCard sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' } }}>
-                  {dashboardStats.averageRating}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Average Rider Rating
-                </Typography>
-              </DashboardCard>
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <DashboardCard sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' } }}>
-                  {dashboardStats.activeGroups}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.7rem' } }}>
-                  Active Savings Groups
-                </Typography>
-              </DashboardCard>
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
     </Box>
@@ -3008,7 +3822,7 @@ const SuperAdminDashboard = () => {
       fullWidth
       fullScreen={isMobile}
       TransitionComponent={Slide}
-      PaperProps={{ sx: { borderRadius: { xs: 2, sm: 3 } } }}
+      PaperProps={{ sx: { borderRadius: { xs: 0, sm: 3 } } }}
     >
       <Box sx={{ bgcolor: '#0025DD', color: 'white', p: { xs: 2, sm: 2.5 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -3758,456 +4572,6 @@ const SuperAdminDashboard = () => {
     </Box>
   );
 
-  // ============ SIDEBAR RENDER ============
-  const renderSidebar = () => (
-    <SidebarContainer className={mobileSidebarOpen ? 'open' : ''}>
-      <GradientCard gradient="linear-gradient(135deg, #0025DD 0%, #4F46E5 100%)" sx={{ borderRadius: 0 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-          <MotorcycleIcon sx={{ fontSize: 28 }} />
-          <Typography variant="h5" fontWeight="bold">
-            Enfuna
-          </Typography>
-        </Box>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem' }}>
-          System Admin
-        </Typography>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', mt: 0.5 }}>
-          🇺🇬 Kampala, Uganda
-        </Typography>
-      </GradientCard>
-      
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Avatar 
-          sx={{ 
-            bgcolor: '#0025DD', 
-            width: 40, 
-            height: 40,
-            fontSize: '1rem',
-            fontWeight: 'bold'
-          }}
-        >
-          {user.full_names?.charAt(0) || 'A'}
-        </Avatar>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="body2" fontWeight="bold" noWrap>
-            {user.full_names}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap>
-            {currentUserRole.replace('_', ' ').toUpperCase()}
-          </Typography>
-        </Box>
-        <Tooltip title="Switch Role (Demo)">
-          <IconButton size="small" onClick={() => {
-            const roles = ['super_admin', 'admin', 'agent'];
-            const currentIndex = roles.indexOf(currentUserRole);
-            const nextRole = roles[(currentIndex + 1) % roles.length];
-            changeUserRole(nextRole);
-          }}>
-            <AdminPanelSettingsIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Box>
-      
-      <Divider />
-      
-      <List sx={{ flex: 1, px: 1, py: 2 }}>
-        {sidebarItems.map((item) => {
-          const isActive = activeTab === item.tab;
-          if (item.permission && !hasPermission(item.permission)) return null;
-          
-          return (
-            <ListItem 
-              key={item.tab}
-              onClick={() => {
-                setActiveTab(item.tab);
-                setMobileSidebarOpen(false);
-              }}
-              sx={{ 
-                borderRadius: 2, 
-                mb: 0.5,
-                cursor: 'pointer',
-                bgcolor: isActive ? alpha('#0025DD', 0.08) : 'transparent',
-                borderLeft: isActive ? '3px solid #0025DD' : '3px solid transparent',
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: alpha('#0025DD', 0.04),
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 40 }}>
-                <item.icon sx={{ 
-                  color: isActive ? '#0025DD' : '#64748B',
-                  fontSize: 20,
-                  transition: 'color 0.2s'
-                }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.label} 
-                primaryTypographyProps={{ 
-                  fontWeight: isActive ? 600 : 400,
-                  color: isActive ? '#0025DD' : '#334155',
-                  fontSize: '0.85rem',
-                }}
-              />
-              {item.badge > 0 && (
-                <Box
-                  sx={{
-                    bgcolor: isActive ? '#0025DD' : '#EF4444',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: 22,
-                    height: 22,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.7rem',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {item.badge}
-                </Box>
-              )}
-            </ListItem>
-          );
-        })}
-      </List>
-      
-      <Box sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.08)', bgcolor: '#F8FAFC' }}>
-        <ActionButton
-          fullWidth
-          variant="outlined"
-          color="error"
-          startIcon={<LogoutIcon />}
-          sx={{ borderColor: '#DC2626', color: '#DC2626' }}
-        >
-          Logout
-        </ActionButton>
-      </Box>
-    </SidebarContainer>
-  );
-
-  // ============ DETAILS MODAL RENDERER ============
-  const renderDetailsModal = () => {
-    if (!selectedItem) return null;
-
-    const getStatusColor = (status) => {
-      const colors = {
-        active: '#10B981',
-        completed: '#10B981',
-        approved: '#10B981',
-        resolved: '#10B981',
-        pending: '#F59E0B',
-        investigating: '#6366F1',
-        escalated: '#EF4444',
-        inactive: '#6B7280',
-        suspended: '#EF4444',
-        cancelled: '#EF4444',
-        rejected: '#EF4444',
-      };
-      return colors[status?.toLowerCase()] || '#6B7280';
-    };
-
-    const renderRiderDetails = () => (
-      <Box>
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { xs: 'flex-start', sm: 'center' }, 
-          gap: 2, 
-          mb: 3, 
-          pb: 3, 
-          borderBottom: '1px solid',
-          borderColor: 'divider'
-        }}>
-          <Avatar sx={{ 
-            width: { xs: 60, sm: 72 }, 
-            height: { xs: 60, sm: 72 }, 
-            bgcolor: '#0025DD', 
-            fontSize: { xs: 24, sm: 28 }, 
-            fontWeight: 'bold' 
-          }}>
-            {selectedItem.full_names?.charAt(0)}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
-              {selectedItem.full_names}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
-            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap" useFlexGap>
-              <Chip 
-                label={selectedItem.status} 
-                size="small" 
-                sx={{ bgcolor: alpha(getStatusColor(selectedItem.status), 0.1), color: getStatusColor(selectedItem.status), fontWeight: 600 }}
-              />
-              {selectedItem.is_verified && (
-                <Chip 
-                  icon={<VerifiedUserIcon sx={{ fontSize: 14 }} />}
-                  label="Verified" 
-                  size="small" 
-                  sx={{ bgcolor: alpha('#10B981', 0.1), color: '#10B981', fontWeight: 600 }}
-                />
-              )}
-              {selectedItem.is_agent && (
-                <Chip 
-                  icon={<AdminPanelSettingsIcon sx={{ fontSize: 14 }} />}
-                  label="Agent" 
-                  size="small" 
-                  sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }}
-                />
-              )}
-            </Stack>
-          </Box>
-        </Box>
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Personal Information" icon={PersonIcon} color="#0025DD">
-              <DetailField label="Full Name" value={selectedItem.full_names} icon={PersonIcon} color="#0025DD" />
-              <DetailField label="Email Address" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
-              <DetailField label="Phone Number" value={selectedItem.phone_number} icon={PhoneIcon} color="#10B981" />
-              <DetailField label="Member Since" value={new Date(selectedItem.created_at).toLocaleDateString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
-            </DetailSection>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Vehicle Information" icon={MotorcycleIcon} color="#F59E0B">
-              <DetailField label="Vehicle Type" value={selectedItem.vehicle_type} icon={DirectionsBikeIcon} color="#F59E0B" />
-              <DetailField label="Motorcycle Model" value={selectedItem.motorcycle_model} icon={TwoWheelerIcon} color="#8B5CF6" />
-              <DetailField label="License Plate" value={selectedItem.license_plate} icon={LocalShippingIcon} color="#06B6D4" />
-              <DetailField label="Rider Type" value={selectedItem.rider_type?.replace('_', ' ')} icon={WorkIcon} color="#EC4899" />
-            </DetailSection>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Location Details" icon={LocationOnIcon} color="#EF4444">
-              <DetailField label="Stage" value={selectedItem.stage} icon={LocationOnIcon} color="#EF4444" />
-              <DetailField label="Division" value={selectedItem.division} icon={BusinessIcon} color="#8B5CF6" />
-              <DetailField label="District" value={selectedItem.district} icon={FlagIcon} color="#0025DD" />
-            </DetailSection>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
-              <Grid container spacing={1.5}>
-                <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h6" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                      {selectedItem.total_trips?.toLocaleString() || '0'}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
-                      Total Trips
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h6" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                      UGX {formatCurrency(selectedItem.total_earnings)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
-                      Total Earnings
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                      <StarIcon sx={{ fontSize: { xs: 16, sm: 18 }, color: '#F59E0B' }} />
-                      <Typography variant="h6" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                        {selectedItem.rating || '0.0'}
-                      </Typography>
-                    </Box>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
-                      Rating
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h6" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                      {selectedItem.total_deliveries || '0'}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
-                      Deliveries
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </DetailSection>
-          </Grid>
-        </Grid>
-
-        {hasPermission('canManageRiders') && (
-          <>
-            <Divider sx={{ my: { xs: 2, sm: 3 } }} />
-            <Box sx={{ 
-              display: 'flex', 
-              gap: 2, 
-              justifyContent: 'flex-end',
-              flexDirection: { xs: 'column', sm: 'row' },
-            }}>
-              <ActionButton
-                variant="contained"
-                fullWidth={isMobile}
-                startIcon={selectedItem.status === 'active' ? <BlockIcon /> : <CheckIcon />}
-                onClick={() => {
-                  handleBlockUser(selectedItem, 'rider');
-                  handleCloseDetailsModal();
-                }}
-                sx={{ bgcolor: selectedItem.status === 'active' ? '#EF4444' : '#10B981' }}
-              >
-                {selectedItem.status === 'active' ? 'Block User' : 'Unblock User'}
-              </ActionButton>
-              <ActionButton
-                variant="outlined"
-                fullWidth={isMobile}
-                startIcon={<DeleteIcon />}
-                onClick={() => {
-                  handleDeleteUser(selectedItem, 'rider');
-                  handleCloseDetailsModal();
-                }}
-                sx={{ borderColor: '#EF4444', color: '#EF4444' }}
-              >
-                Delete User
-              </ActionButton>
-            </Box>
-          </>
-        )}
-      </Box>
-    );
-
-    const renderDisputeDetails = () => (
-      <Box>
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { xs: 'flex-start', sm: 'center' }, 
-          gap: 2, 
-          mb: 3, 
-          pb: 3, 
-          borderBottom: '1px solid rgba(0,0,0,0.1)' 
-        }}>
-          <Box sx={{ bgcolor: alpha('#EF4444', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <SupportAgentIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#EF4444' }} />
-          </Box>
-          <Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
-              {selectedItem.ticket_number}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">{selectedItem.title}</Typography>
-            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
-              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
-              <Chip 
-                label={selectedItem.priority} 
-                size="small" 
-                sx={{ bgcolor: selectedItem.priority === 'high' ? alpha('#EF4444', 0.1) : alpha('#F59E0B', 0.1), color: selectedItem.priority === 'high' ? '#991B1B' : '#92400E' }}
-              />
-              <Chip label={selectedItem.category} size="small" />
-            </Stack>
-          </Box>
-        </Box>
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Dispute Information" icon={InfoIcon} color="#EF4444">
-              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
-              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
-              <DetailField label="Trip ID" value={selectedItem.trip_id} icon={DirectionsBikeIcon} color="#F59E0B" />
-              <DetailField label="Created" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
-              {selectedItem.resolved_at && (
-                <DetailField label="Resolved" value={new Date(selectedItem.resolved_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
-              )}
-            </DetailSection>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DetailSection title="Description" icon={DescriptionIcon} color="#6366F1">
-              <Typography variant="body2" sx={{ p: 1, bgcolor: '#F8FAFC', borderRadius: 2 }}>
-                {selectedItem.description}
-              </Typography>
-              {selectedItem.resolution_notes && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2" fontWeight="bold" color="#10B981">Resolution Notes:</Typography>
-                  <Typography variant="body2" sx={{ p: 1, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    {selectedItem.resolution_notes}
-                  </Typography>
-                </Box>
-              )}
-            </DetailSection>
-          </Grid>
-          <Grid item xs={12}>
-            <DetailSection title="Chat History" icon={ChatIcon} color="#0025DD">
-              <Box sx={{ maxHeight: 300, overflowY: 'auto', p: 1 }}>
-                {selectedItem.messages?.map((msg) => (
-                  <ChatBubble key={msg.id} isUser={msg.sender === 'admin'}>
-                    <Typography variant="caption" className="message-sender">
-                      {msg.sender_name} • {new Date(msg.timestamp).toLocaleTimeString()}
-                    </Typography>
-                    <Box className="message-content">
-                      <Typography variant="body2">{msg.message}</Typography>
-                    </Box>
-                  </ChatBubble>
-                ))}
-              </Box>
-              {hasPermission('canManageDisputes') && selectedItem.status !== 'resolved' && (
-                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    placeholder="Type a reply..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
-                  />
-                  <IconButton onClick={handleSendChatMessage} sx={{ bgcolor: '#0025DD', color: 'white', borderRadius: 2 }}>
-                    <SendIcon />
-                  </IconButton>
-                </Box>
-              )}
-            </DetailSection>
-          </Grid>
-        </Grid>
-
-        {hasPermission('canManageDisputes') && selectedItem.status !== 'resolved' && (
-          <>
-            <Divider sx={{ my: 2 }} />
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-              <ActionButton
-                variant="outlined"
-                startIcon={<PendingIcon />}
-                onClick={() => handleUpdateDisputeStatus(selectedItem, 'investigating')}
-                sx={{ borderColor: '#F59E0B', color: '#F59E0B' }}
-              >
-                Mark Investigating
-              </ActionButton>
-              <ActionButton
-                variant="contained"
-                startIcon={<CheckCircleOutlineIcon />}
-                onClick={() => {
-                  const resolution = prompt('Enter resolution notes:');
-                  if (resolution) handleResolveDispute(selectedItem, resolution);
-                }}
-                sx={{ bgcolor: '#10B981' }}
-              >
-                Mark Resolved
-              </ActionButton>
-            </Box>
-          </>
-        )}
-      </Box>
-    );
-
-    // Simplified renderers for other types
-    const renderGenericDetails = () => (
-      <Box>
-        <Typography variant="body1">Details for {modalType}</Typography>
-        <pre>{JSON.stringify(selectedItem, null, 2)}</pre>
-      </Box>
-    );
-
-    switch (modalType) {
-      case 'rider': return renderRiderDetails();
-      case 'dispute': return renderDisputeDetails();
-      default: return renderGenericDetails();
-    }
-  };
-
   // ============ TAB CONTENT ROUTER ============
   const renderTabContent = () => {
     switch (activeTab) {
@@ -4353,7 +4717,7 @@ const SuperAdminDashboard = () => {
           columns={[
             { key: 'full_name', label: 'Name', render: (c) => (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: '#8B5CF6', fontSize: '0.8rem' }}>
+                <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: getTypeColor(c.type), fontSize: '0.8rem' }}>
                   {c.full_name?.charAt(0)}
                 </Avatar>
                 <Box>
@@ -4365,7 +4729,7 @@ const SuperAdminDashboard = () => {
               </Box>
             )},
             { key: 'type', label: 'Type', render: (c) => (
-              <Chip label={c.type} size="small" sx={{ bgcolor: alpha('#8B5CF6', 0.1), color: '#6D28D9', fontWeight: 600 }} />
+              <Chip label={c.type} size="small" sx={{ bgcolor: alpha(getTypeColor(c.type), 0.1), color: getTypeColor(c.type), fontWeight: 600 }} />
             )},
             { key: 'phone', label: 'Phone' },
             { key: 'bussiness_name', label: 'Business' },
