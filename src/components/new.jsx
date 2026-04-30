@@ -148,7 +148,7 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
 import PendingIcon from '@mui/icons-material/Pending';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircle';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
