@@ -1245,7 +1245,7 @@ const SuperAdminDashboard = () => {
       doc.setFontSize(20);
       doc.text('Enfuna Uganda', 14, 22);
       doc.setFontSize(12);
-      doc.text('Boda Boda Rider Management System', 14, 32);
+      doc.text('Rider Management System', 14, 32);
       
       // Title
       doc.setTextColor(0, 37, 221);
@@ -1406,7 +1406,7 @@ const SuperAdminDashboard = () => {
           </Typography>
         </Box>
         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem' }}>
-          Boda Boda Rider Management System
+          System Admin
         </Typography>
         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', mt: 0.5 }}>
           🇺🇬 Kampala, Uganda
@@ -1551,7 +1551,7 @@ const SuperAdminDashboard = () => {
                 })}
               </Typography>
               <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', mt: 0.5, display: 'block' }}>
-                Enfuna Boda Boda Admin Dashboard • Kampala, Uganda 🇺🇬
+                Enfuna Rider System Admin Dashboard • Kampala, Uganda 🇺🇬
               </Typography>
             </Box>
           </Box>
