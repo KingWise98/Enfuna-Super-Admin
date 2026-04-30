@@ -1067,16 +1067,16 @@ function ScrollToTop() {
   );
 }
 
-// ==================== DETAILS MODAL COMPONENT ====================
+// ==================== MOBILE RESPONSIVE DETAILS MODAL COMPONENTS ====================
 const DetailField = ({ label, value, icon: Icon, color }) => (
-  <Box sx={{ mb: 2 }}>
+  <Box sx={{ mb: { xs: 1.5, sm: 2 } }}>
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
-      {Icon && <Icon sx={{ fontSize: 14, color: color || '#64748B' }} />}
-      <Typography variant="caption" color="text.secondary" fontWeight={600}>
+      {Icon && <Icon sx={{ fontSize: { xs: 13, sm: 14 }, color: color || '#64748B' }} />}
+      <Typography variant="caption" color="text.secondary" fontWeight={600} sx={{ fontSize: { xs: '0.65rem', sm: '0.7rem' } }}>
         {label}
       </Typography>
     </Box>
-    <Typography variant="body2" fontWeight={500} sx={{ pl: Icon ? 2.5 : 0 }}>
+    <Typography variant="body2" fontWeight={500} sx={{ pl: Icon ? 2.5 : 0, fontSize: { xs: '0.8rem', sm: '0.875rem' }, wordBreak: 'break-word' }}>
       {value || 'N/A'}
     </Typography>
   </Box>
@@ -1086,20 +1086,21 @@ const DetailSection = ({ title, children, icon: Icon, color }) => (
   <Paper 
     elevation={0} 
     sx={{ 
-      p: 2.5, 
-      borderRadius: 3, 
+      p: { xs: 1.5, sm: 2, md: 2.5 }, 
+      borderRadius: { xs: 2, sm: 3 }, 
       bgcolor: 'white', 
       border: '1px solid rgba(0,0,0,0.06)',
-      height: '100%'
+      height: '100%',
+      mb: { xs: 1.5, sm: 2 }
     }}
   >
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-      {Icon && <Icon sx={{ color: color || '#0025DD', fontSize: 20 }} />}
-      <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#1E293B' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: { xs: 1.5, sm: 2 } }}>
+      {Icon && <Icon sx={{ color: color || '#0025DD', fontSize: { xs: 18, sm: 20 } }} />}
+      <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#1E293B', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
         {title}
       </Typography>
     </Box>
-    <Divider sx={{ mb: 2 }} />
+    <Divider sx={{ mb: { xs: 1.5, sm: 2 } }} />
     {children}
   </Paper>
 );
@@ -1107,8 +1108,9 @@ const DetailSection = ({ title, children, icon: Icon, color }) => (
 // ==================== MAIN COMPONENT ====================
 const SuperAdminDashboard = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
   const navigate = useNavigate();
   
   // Dummy admin user
@@ -1310,14 +1312,6 @@ const SuperAdminDashboard = () => {
     setContactDialogOpen(false);
   };
 
-  const handleDeleteContact = (id) => {
-    // This is now handled by the generic delete confirmation
-    const contact = contacts.find(c => c.id === id);
-    if (contact) {
-      handleDeleteUser(contact, 'contact');
-    }
-  };
-
   // PDF Export
   const exportToPDF = (data, title, columns) => {
     try {
@@ -1382,7 +1376,7 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  // Dashboard Stats Configuration
+  // Dashboard Stats Configuration - OPTIMIZED FOR MOBILE/RESPONSIVE
   const statsCards = [
     { 
       label: 'Total Riders', 
@@ -1480,29 +1474,38 @@ const SuperAdminDashboard = () => {
     { label: 'Withdrawals', icon: PaymentIcon, tab: 9, badge: withdrawals.filter(w => w.status === 'pending').length },
   ];
 
-  // Details Modal Renderer
+  // ==================== MOBILE RESPONSIVE DETAILS MODAL ====================
   const renderDetailsModal = () => {
     if (!selectedItem) return null;
 
     const renderRiderDetails = () => (
       <Box>
-        {/* Header Section */}
+        {/* Header Section - Responsive */}
         <Box sx={{ 
           display: 'flex', 
-          alignItems: 'center', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
           gap: 2, 
           mb: 3, 
           pb: 3, 
           borderBottom: '1px solid',
           borderColor: 'divider'
         }}>
-          <Avatar sx={{ width: 72, height: 72, bgcolor: '#0025DD', fontSize: 28, fontWeight: 'bold' }}>
+          <Avatar sx={{ 
+            width: { xs: 60, sm: 72 }, 
+            height: { xs: 60, sm: 72 }, 
+            bgcolor: '#0025DD', 
+            fontSize: { xs: 24, sm: 28 }, 
+            fontWeight: 'bold' 
+          }}>
             {selectedItem.full_names?.charAt(0)}
           </Avatar>
-          <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.full_names}</Typography>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.full_names}
+            </Typography>
             <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
-            <Stack direction="row" spacing={1} mt={1}>
+            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap" useFlexGap>
               <Chip 
                 label={selectedItem.status} 
                 size="small" 
@@ -1528,10 +1531,10 @@ const SuperAdminDashboard = () => {
           </Box>
         </Box>
 
-        {/* Details Grid Layout */}
+        {/* Details Grid Layout - Single column on mobile, 2 columns on tablet+ */}
         <Grid container spacing={2}>
           {/* Personal Information */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Personal Information" icon={PersonIcon} color="#0025DD">
               <DetailField label="Full Name" value={selectedItem.full_names} icon={PersonIcon} color="#0025DD" />
               <DetailField label="Email Address" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
@@ -1541,7 +1544,7 @@ const SuperAdminDashboard = () => {
           </Grid>
 
           {/* Vehicle Information */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Vehicle Information" icon={MotorcycleIcon} color="#F59E0B">
               <DetailField label="Vehicle Type" value={selectedItem.vehicle_type} icon={DirectionsBikeIcon} color="#F59E0B" />
               <DetailField label="Motorcycle Model" value={selectedItem.motorcycle_model} icon={TwoWheelerIcon} color="#8B5CF6" />
@@ -1551,7 +1554,7 @@ const SuperAdminDashboard = () => {
           </Grid>
 
           {/* Location & Stage */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Location Details" icon={LocationOnIcon} color="#EF4444">
               <DetailField label="Stage" value={selectedItem.stage} icon={LocationOnIcon} color="#EF4444" />
               <DetailField label="Division" value={selectedItem.division} icon={BusinessIcon} color="#8B5CF6" />
@@ -1560,42 +1563,50 @@ const SuperAdminDashboard = () => {
           </Grid>
 
           {/* Performance Metrics */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
-              <Grid container spacing={2}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#0025DD">
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                       {selectedItem.total_trips?.toLocaleString() || '0'}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">Total Trips</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Total Trips
+                    </Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#10B981">
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                       UGX {formatCurrency(selectedItem.total_earnings)}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">Total Earnings</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Total Earnings
+                    </Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                      <StarIcon sx={{ fontSize: 18, color: '#F59E0B' }} />
-                      <Typography variant="h5" fontWeight="bold" color="#F59E0B">
+                      <StarIcon sx={{ fontSize: { xs: 16, sm: 18 }, color: '#F59E0B' }} />
+                      <Typography variant="h6" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                         {selectedItem.rating || '0.0'}
                       </Typography>
                     </Box>
-                    <Typography variant="caption" color="text.secondary">Rating</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Rating
+                    </Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#8B5CF6">
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                       {selectedItem.total_deliveries || '0'}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">Deliveries</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
+                      Deliveries
+                    </Typography>
                   </Box>
                 </Grid>
               </Grid>
@@ -1603,10 +1614,16 @@ const SuperAdminDashboard = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 3 }} />
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+        <Divider sx={{ my: { xs: 2, sm: 3 } }} />
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          justifyContent: 'flex-end',
+          flexDirection: { xs: 'column', sm: 'row' },
+        }}>
           <ActionButton
             variant="contained"
+            fullWidth={isMobile}
             startIcon={selectedItem.status === 'active' ? <BlockIcon /> : <CheckIcon />}
             onClick={() => {
               handleBlockUser(selectedItem, 'rider');
@@ -1618,6 +1635,7 @@ const SuperAdminDashboard = () => {
           </ActionButton>
           <ActionButton
             variant="outlined"
+            fullWidth={isMobile}
             startIcon={<DeleteIcon />}
             onClick={() => {
               handleDeleteUser(selectedItem, 'rider');
@@ -1633,25 +1651,35 @@ const SuperAdminDashboard = () => {
 
     const renderTripDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <DirectionsBikeIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+            <DirectionsBikeIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
             <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
           </Box>
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
               <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
               <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
               <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
               <DetailField label="Destination" value={selectedItem.destination} icon={LocationOnIcon} color="#EF4444" />
@@ -1660,10 +1688,10 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
-                <Typography variant="h4" fontWeight="bold" color="#10B981">
+                <Typography variant="h4" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                   UGX {formatCurrency(selectedItem.trip_fare)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">Trip Fare</Typography>
@@ -1673,7 +1701,7 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
               <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
               {selectedItem.completed_at && (
@@ -1687,18 +1715,28 @@ const SuperAdminDashboard = () => {
 
     const renderExpenseDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#EF4444', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <ReceiptIcon sx={{ fontSize: 32, color: '#EF4444' }} />
+            <ReceiptIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#EF4444' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
             <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
           </Box>
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Expense Information" icon={InfoIcon} color="#0025DD">
               <DetailField label="Category" value={selectedItem.category} icon={FolderIcon} color="#0025DD" />
               <DetailField label="Expense Type" value={selectedItem.expense_type} icon={BuildIcon} color="#8B5CF6" />
@@ -1707,10 +1745,10 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#EF4444">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
-                <Typography variant="h4" fontWeight="bold" color="#EF4444">
+                <Typography variant="h4" fontWeight="bold" color="#EF4444" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                   UGX {formatCurrency(selectedItem.amount)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">Expense Amount</Typography>
@@ -1730,13 +1768,23 @@ const SuperAdminDashboard = () => {
 
     const renderContactDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <ContactsIcon sx={{ fontSize: 32, color: getTypeColor(selectedItem.type) }} />
+            <ContactsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: getTypeColor(selectedItem.type) }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.full_name}</Typography>
-            <Stack direction="row" spacing={1} mt={0.5}>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.full_name}
+            </Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
               <Chip label={selectedItem.type} size="small" sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), color: getTypeColor(selectedItem.type), fontWeight: 600 }} />
               <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
             </Stack>
@@ -1744,7 +1792,7 @@ const SuperAdminDashboard = () => {
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Personal Information" icon={PersonIcon} color={getTypeColor(selectedItem.type)}>
               <DetailField label="Full Name" value={selectedItem.full_name} icon={PersonIcon} color={getTypeColor(selectedItem.type)} />
               <DetailField label="Email" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
@@ -1752,14 +1800,14 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Business Information" icon={BusinessIcon} color="#8B5CF6">
               <DetailField label="Business Name" value={selectedItem.bussiness_name} icon={BusinessIcon} color="#8B5CF6" />
               <DetailField label="Location" value={selectedItem.location} icon={LocationOnIcon} color="#EF4444" />
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2, mt: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                   <StarsIcon sx={{ color: '#F59E0B' }} />
-                  <Typography variant="h5" fontWeight="bold" color="#F59E0B">
+                  <Typography variant="h5" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                     {selectedItem.loyalty_points || 0}
                   </Typography>
                 </Box>
@@ -1768,24 +1816,24 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12}>
             <DetailSection title="Activity Summary" icon={AssessmentIcon} color="#10B981">
-              <Grid container spacing={2}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={4}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#0025DD">{selectedItem.total_trips || 0}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#0025DD">{selectedItem.total_trips || 0}</Typography>
                     <Typography variant="caption" color="text.secondary">Total Trips</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={4}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_spent || 0)}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_spent || 0)}</Typography>
                     <Typography variant="caption" color="text.secondary">Total Spent</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={4}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#6366F1">{selectedItem.total_orders || 0}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#6366F1">{selectedItem.total_orders || 0}</Typography>
                     <Typography variant="caption" color="text.secondary">Total Orders</Typography>
                   </Box>
                 </Grid>
@@ -1798,42 +1846,60 @@ const SuperAdminDashboard = () => {
 
     const renderWalletDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#06B6D4', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <AccountBalanceIcon sx={{ fontSize: 32, color: '#06B6D4' }} />
+            <AccountBalanceIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#06B6D4' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">Wallet: {selectedItem.rider_name}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              Wallet: {selectedItem.rider_name}
+            </Typography>
             <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
             <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" sx={{ mt: 0.5 }} status={selectedItem.is_active ? 'active' : 'inactive'} />
           </Box>
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12}>
             <DetailSection title="Balance Overview" icon={AccountBalanceWalletIcon} color="#06B6D4">
-              <Grid container spacing={2}>
-                <Grid item xs={6} md={3}>
-                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#06B6D4', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#06B6D4">UGX {formatCurrency(selectedItem.balance)}</Typography>
+              <Grid container spacing={1.5}>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#06B6D4', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#06B6D4" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.balance)}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">Total Balance</Typography>
                   </Box>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.available_balance)}</Typography>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.available_balance)}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">Available</Typography>
                   </Box>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.reserved_balance)}</Typography>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      UGX {formatCurrency(selectedItem.reserved_balance)}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">Reserved</Typography>
                   </Box>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#8B5CF6">{selectedItem.currency}</Typography>
+                <Grid item xs={6} sm={3}>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 }, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+                      {selectedItem.currency}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">Currency</Typography>
                   </Box>
                 </Grid>
@@ -1841,7 +1907,7 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Transaction Summary" icon={TrendingUpIcon} color="#10B981">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
@@ -1853,7 +1919,7 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Withdrawal Summary" icon={TrendingDownIcon} color="#EF4444">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
@@ -1870,13 +1936,23 @@ const SuperAdminDashboard = () => {
 
     const renderGroupDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#8B5CF6', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <GroupsIcon sx={{ fontSize: 32, color: '#8B5CF6' }} />
+            <GroupsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#8B5CF6' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.name}</Typography>
-            <Stack direction="row" spacing={1} mt={0.5}>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.name}
+            </Typography>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
               <Chip label={selectedItem.group_type} size="small" sx={{ bgcolor: alpha('#8B5CF6', 0.1), color: '#8B5CF6', fontWeight: 600 }} />
               <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
             </Stack>
@@ -1884,13 +1960,13 @@ const SuperAdminDashboard = () => {
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12}>
             <DetailSection title="Group Information" icon={InfoIcon} color="#8B5CF6">
               <DetailField label="Description" value={selectedItem.description} icon={DescriptionIcon} color="#8B5CF6" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Membership" icon={PeopleIcon} color="#0025DD">
               <Box sx={{ mb: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -1919,10 +1995,10 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2, mb: 2 }}>
-                <Typography variant="h4" fontWeight="bold" color="#8B5CF6">
+                <Typography variant="h4" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                   UGX {formatCurrency(selectedItem.total_pool)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">Total Pool</Typography>
@@ -1938,14 +2014,24 @@ const SuperAdminDashboard = () => {
 
     const renderAgentDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#6366F1', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <PersonAddIcon sx={{ fontSize: 32, color: '#6366F1' }} />
+            <PersonAddIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#6366F1' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.rider_name}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.rider_name}
+            </Typography>
             <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
-            <Stack direction="row" spacing={1} mt={0.5}>
+            <Stack direction="row" spacing={1} mt={0.5} flexWrap="wrap" useFlexGap>
               <Chip label={selectedItem.tier} size="small" sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }} />
               <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" status={selectedItem.is_active ? 'active' : 'inactive'} />
             </Stack>
@@ -1953,7 +2039,7 @@ const SuperAdminDashboard = () => {
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Agent Information" icon={InfoIcon} color="#6366F1">
               <DetailField label="Referral Code" value={selectedItem.referral_code} icon={SaveIcon} color="#6366F1" />
               <DetailField label="Tier" value={selectedItem.tier} icon={StarsIcon} color="#F59E0B" />
@@ -1961,30 +2047,30 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
-              <Grid container spacing={2}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#6366F1">{selectedItem.total_referrals}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#6366F1">{selectedItem.total_referrals}</Typography>
                     <Typography variant="caption" color="text.secondary">Total Referrals</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#10B981">{selectedItem.active_referrals}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981">{selectedItem.active_referrals}</Typography>
                     <Typography variant="caption" color="text.secondary">Active Referrals</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_commission)}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_commission)}</Typography>
                     <Typography variant="caption" color="text.secondary">Total Commission</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.available_commission)}</Typography>
+                  <Box sx={{ textAlign: 'center', p: { xs: 1, sm: 2 }, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h6" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.available_commission)}</Typography>
                     <Typography variant="caption" color="text.secondary">Available Commission</Typography>
                   </Box>
                 </Grid>
@@ -1997,49 +2083,61 @@ const SuperAdminDashboard = () => {
 
     const renderDeliveryDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <LocalShippingIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+            <LocalShippingIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
             <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
           </Box>
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
               <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
               <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Package Details" icon={FolderIcon} color="#F59E0B">
               <DetailField label="Package Type" value={selectedItem.package_type} icon={FolderIcon} color="#F59E0B" />
               <DetailField label="Package Weight" value={selectedItem.package_weight} icon={LocalShippingIcon} color="#06B6D4" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
               <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
               <DetailField label="Drop-off Location" value={selectedItem.drop_off_location} icon={LocationOnIcon} color="#EF4444" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
-                <Typography variant="h4" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.delivery_fee)}</Typography>
+                <Typography variant="h4" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.delivery_fee)}
+                </Typography>
                 <Typography variant="caption" color="text.secondary">Delivery Fee</Typography>
               </Box>
               <DetailField label="Payment Method" value={selectedItem.payment_method} icon={PaymentIcon} color="#6366F1" />
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
               <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
               {selectedItem.completed_at && (
@@ -2053,18 +2151,28 @@ const SuperAdminDashboard = () => {
 
     const renderWithdrawalDetails = () => (
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid rgba(0,0,0,0.1)' 
+        }}>
           <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
-            <PaymentIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+            <PaymentIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: '#0025DD' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              {selectedItem.id}
+            </Typography>
             <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
           </Box>
         </Box>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Withdrawal Information" icon={InfoIcon} color="#0025DD">
               <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
               <DetailField label="Payment Method" value={selectedItem.payment_method?.replace('_', ' ')} icon={PaymentIcon} color="#6366F1" />
@@ -2072,10 +2180,12 @@ const SuperAdminDashboard = () => {
             </DetailSection>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
               <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2, mb: 2 }}>
-                <Typography variant="h4" fontWeight="bold" color="#0025DD">UGX {formatCurrency(selectedItem.amount)}</Typography>
+                <Typography variant="h4" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                  UGX {formatCurrency(selectedItem.amount)}
+                </Typography>
                 <Typography variant="caption" color="text.secondary">Withdrawal Amount</Typography>
               </Box>
               <DetailField label="Requested Date" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
@@ -2221,37 +2331,44 @@ const SuperAdminDashboard = () => {
     </SidebarContainer>
   );
 
-  // ============ DASHBOARD TAB ============
+  // ============ DASHBOARD TAB - REORGANIZED & RESPONSIVE ============
   const renderDashboardTab = () => (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      {/* Welcome Header */}
+    <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+      {/* Welcome Header - Responsive */}
       <GradientCard 
         gradient={greeting.isHoliday 
           ? `linear-gradient(135deg, ${greeting.color} 0%, ${greeting.color}cc 100%)`
           : 'linear-gradient(135deg, #0025DD 0%, #4F46E5 100%)'
         }
-        sx={{ mb: 3 }}
+        sx={{ mb: { xs: 2, sm: 3 }, p: { xs: 2, sm: 3 } }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          justifyContent: 'space-between', 
+          gap: 2 
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, flexWrap: 'wrap' }}>
             {greeting.icon && (
               <Box sx={{ 
                 bgcolor: 'rgba(255,255,255,0.2)', 
                 borderRadius: '50%', 
-                width: 56, 
-                height: 56, 
+                width: { xs: 48, sm: 56 }, 
+                height: { xs: 48, sm: 56 }, 
                 display: 'flex', 
                 alignItems: 'center', 
-                justifyContent: 'center' 
+                justifyContent: 'center',
+                flexShrink: 0
               }}>
-                <greeting.icon sx={{ fontSize: 28 }} />
+                <greeting.icon sx={{ fontSize: { xs: 24, sm: 28 } }} />
               </Box>
             )}
             <Box>
-              <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+              <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' } }}>
                 {greeting.text}, {user.full_names?.split(' ')[0]}!
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)' }}>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                 {new Date().toLocaleDateString('en-UG', { 
                   weekday: 'long', 
                   year: 'numeric', 
@@ -2260,19 +2377,25 @@ const SuperAdminDashboard = () => {
                   timeZone: 'Africa/Kampala'
                 })}
               </Typography>
-              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', mt: 0.5, display: 'block' }}>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', mt: 0.5, display: 'block', fontSize: { xs: '0.6rem', sm: '0.65rem' } }}>
                 Enfuna Rider System Admin Dashboard • Kampala, Uganda 🇺🇬
               </Typography>
             </Box>
           </Box>
           
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, alignSelf: { xs: 'flex-end', sm: 'center' } }}>
             <ActionButton
               variant="contained"
               startIcon={refreshing ? <CircularProgress size={18} color="inherit" /> : <RefreshIcon />}
               onClick={handleRefresh}
               disabled={refreshing}
-              sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
+              sx={{ 
+                bgcolor: 'rgba(255,255,255,0.2)', 
+                color: 'white', 
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' },
+                fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                px: { xs: 1.5, sm: 2 }
+              }}
             >
               {refreshing ? 'Refreshing...' : 'Refresh'}
             </ActionButton>
@@ -2283,18 +2406,18 @@ const SuperAdminDashboard = () => {
         </Box>
       </GradientCard>
 
-      {/* Key Metrics */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, color: '#1E293B' }}>
+      {/* Key Metrics - Responsive Grid */}
+      <Box sx={{ mb: { xs: 2, sm: 3 } }}>
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: { xs: 1.5, sm: 2 }, color: '#1E293B', fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
           Key Performance Metrics
         </Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1, sm: 1.5, md: 2 }}>
           {statsCards.map((stat, index) => (
             <Grid item xs={6} sm={4} md={3} key={index}>
               <DashboardCard>
                 <Box sx={{ 
                   background: stat.gradient,
-                  p: { xs: 2, sm: 2.5 },
+                  p: { xs: 1.5, sm: 2, md: 2.5 },
                   color: 'white',
                   position: 'relative',
                   overflow: 'hidden',
@@ -2310,18 +2433,35 @@ const SuperAdminDashboard = () => {
                   }
                 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Box>
-                      <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <Box sx={{ flex: 1, mr: 1, minWidth: 0 }}>
+                      <Typography variant="caption" sx={{ 
+                        opacity: 0.9, 
+                        fontSize: { xs: '0.55rem', sm: '0.6rem', md: '0.65rem' }, 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.5px',
+                        display: 'block'
+                      }}>
                         {stat.label}
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5, fontSize: { xs: '0.9rem', sm: '1.1rem' }, lineHeight: 1.2 }}>
+                      <Typography variant="h6" fontWeight="bold" sx={{ 
+                        mt: 0.5, 
+                        fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1.1rem' }, 
+                        lineHeight: 1.2,
+                        wordBreak: 'break-word'
+                      }}>
                         {stat.value}
                       </Typography>
                     </Box>
-                    <stat.icon sx={{ fontSize: { xs: 28, sm: 32 }, opacity: 0.9 }} />
+                    <stat.icon sx={{ fontSize: { xs: 24, sm: 28, md: 32 }, opacity: 0.9, flexShrink: 0 }} />
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="caption" sx={{ opacity: 0.85, fontSize: '0.65rem' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                    <Typography variant="caption" sx={{ 
+                      opacity: 0.85, 
+                      fontSize: { xs: '0.55rem', sm: '0.6rem', md: '0.65rem' },
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
                       {stat.subValue}
                     </Typography>
                     {stat.change && (
@@ -2333,6 +2473,7 @@ const SuperAdminDashboard = () => {
                           fontSize: '0.6rem',
                           bgcolor: stat.changeType === 'up' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)',
                           color: 'white',
+                          flexShrink: 0,
                         }}
                         icon={stat.changeType === 'up' ? <TrendingUpIcon sx={{ fontSize: 12 }} /> : <TrendingDownIcon sx={{ fontSize: 12 }} />}
                       />
@@ -2345,21 +2486,23 @@ const SuperAdminDashboard = () => {
         </Grid>
       </Box>
 
-      {/* Quick Overview Cards - REORGANIZED LAYOUT */}
-      <Grid container spacing={3}>
-        {/* Recent Trips (Left Side) */}
-        <Grid item xs={12} md={6}>
+      {/* Quick Overview Cards - REORGANIZED RESPONSIVE LAYOUT */}
+      <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
+        {/* Recent Trips */}
+        <Grid item xs={12} lg={6}>
           <StyledCard>
             <Box sx={{ 
-              p: 2.5, 
+              p: { xs: 1.5, sm: 2, md: 2.5 }, 
               borderBottom: '1px solid rgba(0,0,0,0.06)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 1
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <DirectionsBikeIcon sx={{ color: '#0025DD' }} />
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
+                <DirectionsBikeIcon sx={{ color: '#0025DD', fontSize: { xs: 20, sm: 24 } }} />
+                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' } }}>
                   Recent Trips
                 </Typography>
                 <Chip label={trips.length} size="small" sx={{ bgcolor: alpha('#0025DD', 0.1), color: '#0025DD' }} />
@@ -2368,20 +2511,20 @@ const SuperAdminDashboard = () => {
                 size="small" 
                 onClick={() => setActiveTab(2)} 
                 endIcon={<ArrowForwardIcon />}
-                sx={{ color: '#0025DD', textTransform: 'none' }}
+                sx={{ color: '#0025DD', textTransform: 'none', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
               >
                 View All
               </Button>
             </Box>
-            <TableContainer sx={{ maxHeight: 400 }}>
+            <TableContainer sx={{ maxHeight: { xs: 300, sm: 350, md: 400 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Rider</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Route</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Fare</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Rider</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Route</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="right">Fare</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -2389,19 +2532,27 @@ const SuperAdminDashboard = () => {
                     <TableRow key={trip.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ width: 28, height: 28, bgcolor: '#0025DD', fontSize: '0.7rem' }}>
+                          <Avatar sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, bgcolor: '#0025DD', fontSize: '0.7rem' }}>
                             {trip.rider_name?.charAt(0)}
                           </Avatar>
-                          <Typography variant="body2" noWrap>{trip.rider_name}</Typography>
+                          <Typography variant="body2" noWrap sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                            {trip.rider_name}
+                          </Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <Typography variant="body2" sx={{ 
+                          maxWidth: { xs: 80, sm: 120, md: 150 }, 
+                          overflow: 'hidden', 
+                          textOverflow: 'ellipsis', 
+                          whiteSpace: 'nowrap',
+                          fontSize: { xs: '0.7rem', sm: '0.8rem' }
+                        }}>
                           {trip.pickup_location}
                         </Typography>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" fontWeight="bold">
+                        <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                           UGX {formatCurrency(trip.trip_fare)}
                         </Typography>
                       </TableCell>
@@ -2427,19 +2578,21 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
-        {/* Recent Expenses (Right Side) - Now on same line with Trips */}
-        <Grid item xs={12} md={6}>
+        {/* Recent Expenses */}
+        <Grid item xs={12} lg={6}>
           <StyledCard>
             <Box sx={{ 
-              p: 2.5, 
+              p: { xs: 1.5, sm: 2, md: 2.5 }, 
               borderBottom: '1px solid rgba(0,0,0,0.06)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 1
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <ReceiptIcon sx={{ color: '#EF4444' }} />
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
+                <ReceiptIcon sx={{ color: '#EF4444', fontSize: { xs: 20, sm: 24 } }} />
+                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' } }}>
                   Recent Expenses
                 </Typography>
                 <Chip 
@@ -2452,20 +2605,20 @@ const SuperAdminDashboard = () => {
                 size="small" 
                 onClick={() => setActiveTab(4)} 
                 endIcon={<ArrowForwardIcon />}
-                sx={{ color: '#EF4444', textTransform: 'none' }}
+                sx={{ color: '#EF4444', textTransform: 'none', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
               >
                 View All
               </Button>
             </Box>
-            <TableContainer sx={{ maxHeight: 400 }}>
+            <TableContainer sx={{ maxHeight: { xs: 300, sm: 350, md: 400 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Rider</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Rider</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="right">Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -2473,17 +2626,19 @@ const SuperAdminDashboard = () => {
                     <TableRow key={expense.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ width: 28, height: 28, bgcolor: '#EF4444', fontSize: '0.7rem' }}>
+                          <Avatar sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, bgcolor: '#EF4444', fontSize: '0.7rem' }}>
                             {expense.rider_name?.charAt(0)}
                           </Avatar>
-                          <Typography variant="body2" noWrap>{expense.rider_name}</Typography>
+                          <Typography variant="body2" noWrap sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                            {expense.rider_name}
+                          </Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Chip label={expense.category} size="small" sx={{ fontSize: '0.65rem' }} />
+                        <Chip label={expense.category} size="small" sx={{ fontSize: { xs: '0.6rem', sm: '0.65rem' } }} />
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" fontWeight="bold" color="#EF4444">
+                        <Typography variant="body2" fontWeight="bold" color="#EF4444" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                           UGX {formatCurrency(expense.amount)}
                         </Typography>
                       </TableCell>
@@ -2509,19 +2664,21 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
-        {/* Wallet Balances (Left Side) - Now paired with Groups */}
-        <Grid item xs={12} md={6}>
+        {/* Wallet Balances */}
+        <Grid item xs={12} lg={6}>
           <StyledCard>
             <Box sx={{ 
-              p: 2.5, 
+              p: { xs: 1.5, sm: 2, md: 2.5 }, 
               borderBottom: '1px solid rgba(0,0,0,0.06)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 1
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AccountBalanceIcon sx={{ color: '#06B6D4' }} />
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
+                <AccountBalanceIcon sx={{ color: '#06B6D4', fontSize: { xs: 20, sm: 24 } }} />
+                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' } }}>
                   Wallet Balances
                 </Typography>
               </Box>
@@ -2529,19 +2686,19 @@ const SuperAdminDashboard = () => {
                 size="small" 
                 onClick={() => setActiveTab(6)} 
                 endIcon={<ArrowForwardIcon />}
-                sx={{ color: '#06B6D4', textTransform: 'none' }}
+                sx={{ color: '#06B6D4', textTransform: 'none', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
               >
                 View All
               </Button>
             </Box>
-            <TableContainer sx={{ maxHeight: 350 }}>
+            <TableContainer sx={{ maxHeight: { xs: 300, sm: 350 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Rider</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Balance</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Available</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Rider</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="right">Balance</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="right">Available</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -2549,17 +2706,23 @@ const SuperAdminDashboard = () => {
                     <TableRow key={wallet.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ width: 28, height: 28, bgcolor: '#06B6D4', fontSize: '0.7rem' }}>
+                          <Avatar sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, bgcolor: '#06B6D4', fontSize: '0.7rem' }}>
                             {wallet.rider_name?.charAt(0)}
                           </Avatar>
-                          <Typography variant="body2">{wallet.rider_name}</Typography>
+                          <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                            {wallet.rider_name}
+                          </Typography>
                         </Box>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" fontWeight="bold">UGX {formatCurrency(wallet.balance)}</Typography>
+                        <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                          UGX {formatCurrency(wallet.balance)}
+                        </Typography>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" color="#10B981" fontWeight="bold">UGX {formatCurrency(wallet.available_balance)}</Typography>
+                        <Typography variant="body2" color="#10B981" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                          UGX {formatCurrency(wallet.available_balance)}
+                        </Typography>
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="View Details" arrow>
@@ -2580,19 +2743,21 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
-        {/* Savings Groups (Right Side) - Now paired with Wallets */}
-        <Grid item xs={12} md={6}>
+        {/* Savings Groups */}
+        <Grid item xs={12} lg={6}>
           <StyledCard>
             <Box sx={{ 
-              p: 2.5, 
+              p: { xs: 1.5, sm: 2, md: 2.5 }, 
               borderBottom: '1px solid rgba(0,0,0,0.06)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 1
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <GroupsIcon sx={{ color: '#8B5CF6' }} />
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
+                <GroupsIcon sx={{ color: '#8B5CF6', fontSize: { xs: 20, sm: 24 } }} />
+                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' } }}>
                   Savings Groups
                 </Typography>
               </Box>
@@ -2600,31 +2765,37 @@ const SuperAdminDashboard = () => {
                 size="small" 
                 onClick={() => setActiveTab(5)} 
                 endIcon={<ArrowForwardIcon />}
-                sx={{ color: '#8B5CF6', textTransform: 'none' }}
+                sx={{ color: '#8B5CF6', textTransform: 'none', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
               >
                 View All
               </Button>
             </Box>
-            <TableContainer sx={{ maxHeight: 350 }}>
+            <TableContainer sx={{ maxHeight: { xs: 300, sm: 350 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Group</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Members</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Pool</TableCell>
-                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Group</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Members</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="right">Pool</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC', fontSize: { xs: '0.7rem', sm: '0.75rem' } }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {groups.map((group) => (
                     <TableRow key={group.id} hover>
                       <TableCell>
-                        <Typography variant="body2" fontWeight="bold">{group.name}</Typography>
+                        <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                          {group.name}
+                        </Typography>
                         <Typography variant="caption" color="text.secondary">{group.group_type}</Typography>
                       </TableCell>
-                      <TableCell>{group.member_count}/{group.max_members}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                          {group.member_count}/{group.max_members}
+                        </Typography>
+                      </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" fontWeight="bold" color="#8B5CF6">
+                        <Typography variant="body2" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                           UGX {formatCurrency(group.total_pool)}
                         </Typography>
                       </TableCell>
@@ -2650,7 +2821,7 @@ const SuperAdminDashboard = () => {
     </Box>
   );
 
-  // ============ GENERIC TABLE COMPONENT ============
+  // ============ GENERIC TABLE COMPONENT - MOBILE RESPONSIVE ============
   const DataTable = ({ 
     title, 
     data, 
@@ -2690,11 +2861,11 @@ const SuperAdminDashboard = () => {
     };
 
     return (
-      <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+      <Box sx={{ p: { xs: 1, sm: 1.5, md: 2, lg: 3 } }}>
         <StyledCard>
           {/* Header */}
           <Box sx={{ 
-            p: { xs: 2, sm: 2.5 }, 
+            p: { xs: 1.5, sm: 2, md: 2.5 }, 
             borderBottom: '1px solid rgba(0,0,0,0.06)',
             bgcolor: '#FFFFFF'
           }}>
@@ -2703,11 +2874,11 @@ const SuperAdminDashboard = () => {
               flexDirection: { xs: 'column', sm: 'row' }, 
               justifyContent: 'space-between', 
               alignItems: { xs: 'stretch', sm: 'center' }, 
-              gap: 2, 
+              gap: { xs: 1.5, sm: 2 }, 
               mb: 2 
             }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.1rem' }, color: '#1E293B' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' }, color: '#1E293B' }}>
                   {title}
                 </Typography>
                 <Chip 
@@ -2722,7 +2893,7 @@ const SuperAdminDashboard = () => {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={onAdd}
-                    sx={{ bgcolor: '#0025DD', '&:hover': { bgcolor: '#001DB0' } }}
+                    sx={{ bgcolor: '#0025DD', '&:hover': { bgcolor: '#001DB0' }, fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
                   >
                     Add New
                   </ActionButton>
@@ -2732,7 +2903,7 @@ const SuperAdminDashboard = () => {
                   variant="outlined"
                   startIcon={<FileDownloadIcon />}
                   onClick={handleExport}
-                  sx={{ borderColor: '#0025DD', color: '#0025DD' }}
+                  sx={{ borderColor: '#0025DD', color: '#0025DD', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
                 >
                   Export
                 </ActionButton>
@@ -2741,7 +2912,7 @@ const SuperAdminDashboard = () => {
             
             {/* Search and Filters */}
             {showSearch && (
-              <Grid container spacing={2} alignItems="center">
+              <Grid container spacing={1.5} alignItems="center">
                 <Grid item xs={12} sm={showStatusFilter ? 8 : 12} md={showStatusFilter ? 8 : 8}>
                   <SearchBar
                     fullWidth
@@ -2788,7 +2959,7 @@ const SuperAdminDashboard = () => {
             )}
           </Box>
 
-          {/* Table */}
+          {/* Table - Responsive */}
           <TableContainer sx={{ 
             overflowX: 'auto',
             '&::-webkit-scrollbar': { 
@@ -2803,7 +2974,7 @@ const SuperAdminDashboard = () => {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ bgcolor: '#F8FAFC' }}>
-                  <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <TableCell sx={{ fontWeight: 700, fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' }, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     #
                   </TableCell>
                   {columns.map((col) => (
@@ -2811,7 +2982,7 @@ const SuperAdminDashboard = () => {
                       key={col.key} 
                       sx={{ 
                         fontWeight: 700, 
-                        fontSize: '0.75rem', 
+                        fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' }, 
                         color: '#64748B',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px',
@@ -2821,7 +2992,7 @@ const SuperAdminDashboard = () => {
                       {col.label}
                     </TableCell>
                   ))}
-                  <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <TableCell sx={{ fontWeight: 700, fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' }, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Actions
                   </TableCell>
                 </TableRow>
@@ -2829,10 +3000,10 @@ const SuperAdminDashboard = () => {
               <TableBody>
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={columns.length + 2} align="center" sx={{ py: 8 }}>
+                    <TableCell colSpan={columns.length + 2} align="center" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
                       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                        <ErrorIcon sx={{ color: '#94A3B8', fontSize: 48 }} />
-                        <Typography variant="body1" color="text.secondary" fontWeight="bold">
+                        <ErrorIcon sx={{ color: '#94A3B8', fontSize: { xs: 36, sm: 48 } }} />
+                        <Typography variant="body1" color="text.secondary" fontWeight="bold" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
                           No records found
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -2850,13 +3021,15 @@ const SuperAdminDashboard = () => {
                         '&:last-child td, &:last-child th': { border: 0 },
                       }}
                     >
-                      <TableCell sx={{ color: '#94A3B8', fontSize: '0.8rem' }}>
+                      <TableCell sx={{ color: '#94A3B8', fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' } }}>
                         {page * rowsPerPage + index + 1}
                       </TableCell>
                       {columns.map((col) => (
-                        <TableCell key={col.key} sx={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <TableCell key={col.key} sx={{ maxWidth: { xs: 120, sm: 180, md: 250 }, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {col.render ? col.render(item) : (
-                            <Typography variant="body2">{item[col.key] || 'N/A'}</Typography>
+                            <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' } }}>
+                              {item[col.key] || 'N/A'}
+                            </Typography>
                           )}
                         </TableCell>
                       ))}
@@ -2939,11 +3112,13 @@ const SuperAdminDashboard = () => {
               setPage(0);
             }}
             rowsPerPageOptions={[5, 10, 25, 50]}
-            labelRowsPerPage="Rows per page:"
+            labelRowsPerPage="Rows:"
             sx={{
               borderTop: '1px solid rgba(0,0,0,0.06)',
-              '.MuiTablePagination-selectLabel': { fontSize: '0.8rem' },
-              '.MuiTablePagination-displayedRows': { fontSize: '0.8rem' },
+              '.MuiTablePagination-selectLabel': { fontSize: { xs: '0.7rem', sm: '0.8rem' } },
+              '.MuiTablePagination-displayedRows': { fontSize: { xs: '0.7rem', sm: '0.8rem' } },
+              '.MuiTablePagination-select': { fontSize: { xs: '0.7rem', sm: '0.8rem' } },
+              '.MuiTablePagination-actions': { '& .MuiIconButton-root': { p: { xs: 0.5, sm: 1 } } },
             }}
           />
         </StyledCard>
@@ -2962,11 +3137,13 @@ const SuperAdminDashboard = () => {
       columns={[
         { key: 'full_names', label: 'Rider', render: (r) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: '#0025DD', fontSize: '0.8rem', fontWeight: 'bold' }}>
+            <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: '#0025DD', fontSize: '0.8rem', fontWeight: 'bold' }}>
               {r.full_names?.charAt(0)}
             </Avatar>
             <Box>
-              <Typography variant="body2" fontWeight="bold" noWrap>{r.full_names}</Typography>
+              <Typography variant="body2" fontWeight="bold" noWrap sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {r.full_names}
+              </Typography>
               <Typography variant="caption" color="text.secondary">{r.rider_type?.replace('_', ' ')}</Typography>
             </Box>
           </Box>
@@ -2976,21 +3153,27 @@ const SuperAdminDashboard = () => {
         { key: 'motorcycle_model', label: 'Motorcycle', render: (r) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <MotorcycleIcon sx={{ fontSize: 16, color: '#64748B' }} />
-            <Typography variant="body2">{r.motorcycle_model}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+              {r.motorcycle_model}
+            </Typography>
           </Box>
         )},
         { key: 'total_trips', label: 'Trips', render: (r) => (
-          <Typography variant="body2" fontWeight="bold">{r.total_trips?.toLocaleString()}</Typography>
+          <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+            {r.total_trips?.toLocaleString()}
+          </Typography>
         )},
         { key: 'total_earnings', label: 'Earnings', render: (r) => (
-          <Typography variant="body2" fontWeight="bold" color="#10B981">
+          <Typography variant="body2" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
             UGX {formatCurrency(r.total_earnings)}
           </Typography>
         )},
         { key: 'rating', label: 'Rating', render: (r) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <StarIcon sx={{ fontSize: 14, color: '#F59E0B' }} />
-            <Typography variant="body2">{r.rating || '0.0'}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+              {r.rating || '0.0'}
+            </Typography>
           </Box>
         )},
         { key: 'status', label: 'Status', render: (r) => <StatusChip status={r.status} label={r.status} /> },
@@ -3006,7 +3189,7 @@ const SuperAdminDashboard = () => {
       showStatusFilter
       columns={[
         { key: 'id', label: 'Trip ID', render: (t) => (
-          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#0025DD' }}>
+          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#0025DD', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
             {t.id}
           </Typography>
         )},
@@ -3014,7 +3197,13 @@ const SuperAdminDashboard = () => {
         { key: 'pickup_location', label: 'Pickup', render: (t) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LocationOnIcon sx={{ fontSize: 14, color: '#0025DD' }} />
-            <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography variant="body2" sx={{ 
+              maxWidth: { xs: 80, sm: 120, md: 150 }, 
+              overflow: 'hidden', 
+              textOverflow: 'ellipsis', 
+              whiteSpace: 'nowrap',
+              fontSize: { xs: '0.7rem', sm: '0.8rem' }
+            }}>
               {t.pickup_location}
             </Typography>
           </Box>
@@ -3022,20 +3211,28 @@ const SuperAdminDashboard = () => {
         { key: 'destination', label: 'Destination', render: (t) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LocationOnIcon sx={{ fontSize: 14, color: '#EF4444' }} />
-            <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography variant="body2" sx={{ 
+              maxWidth: { xs: 80, sm: 120, md: 150 }, 
+              overflow: 'hidden', 
+              textOverflow: 'ellipsis', 
+              whiteSpace: 'nowrap',
+              fontSize: { xs: '0.7rem', sm: '0.8rem' }
+            }}>
               {t.destination}
             </Typography>
           </Box>
         )},
         { key: 'trip_fare', label: 'Fare', render: (t) => (
-          <Typography variant="body2" fontWeight="bold">UGX {formatCurrency(t.trip_fare)}</Typography>
+          <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+            UGX {formatCurrency(t.trip_fare)}
+          </Typography>
         )},
         { key: 'payment_method', label: 'Payment', render: (t) => (
           <Chip 
             label={t.payment_method?.replace('_', ' ')} 
             size="small" 
             sx={{ 
-              fontSize: '0.7rem', 
+              fontSize: { xs: '0.6rem', sm: '0.7rem' }, 
               textTransform: 'capitalize',
               bgcolor: t.payment_method === 'mobile_money' ? alpha('#10B981', 0.1) : alpha('#6B7280', 0.1),
               color: t.payment_method === 'mobile_money' ? '#065F46' : '#374151',
@@ -3047,7 +3244,7 @@ const SuperAdminDashboard = () => {
     />
   );
 
-  // ============ CONTACT DIALOG ============
+  // ============ CONTACT DIALOG - MOBILE RESPONSIVE ============
   const renderContactDialog = () => (
     <Dialog 
       open={contactDialogOpen} 
@@ -3058,9 +3255,9 @@ const SuperAdminDashboard = () => {
       TransitionComponent={Slide}
       PaperProps={{ sx: { borderRadius: { xs: 0, sm: 3 } } }}
     >
-      <Box sx={{ bgcolor: '#0025DD', color: 'white', p: 2.5 }}>
+      <Box sx={{ bgcolor: '#0025DD', color: 'white', p: { xs: 2, sm: 2.5 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>
             {currentContact?.id ? 'Edit Contact' : 'Add New Contact'}
           </Typography>
           <IconButton onClick={() => setContactDialogOpen(false)} sx={{ color: 'white' }}>
@@ -3068,8 +3265,8 @@ const SuperAdminDashboard = () => {
           </IconButton>
         </Box>
       </Box>
-      <DialogContent sx={{ p: 3 }}>
-        <Grid container spacing={2.5} sx={{ mt: 0.5 }}>
+      <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Grid container spacing={2} sx={{ mt: 0.5 }}>
           <Grid item xs={12}>
             <TextField fullWidth label="Full Name *" value={currentContact?.full_name || ''} 
               onChange={(e) => setCurrentContact({...currentContact, full_name: e.target.value})}
@@ -3118,9 +3315,9 @@ const SuperAdminDashboard = () => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ p: 2.5, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-        <Button onClick={() => setContactDialogOpen(false)} sx={{ color: '#64748B' }}>Cancel</Button>
-        <ActionButton variant="contained" sx={{ bgcolor: '#0025DD' }} onClick={handleSaveContact} startIcon={<SaveIcon />}>
+      <DialogActions sx={{ p: { xs: 2, sm: 2.5 }, borderTop: '1px solid rgba(0,0,0,0.08)', flexDirection: isMobile ? 'column' : 'row', gap: 1 }}>
+        <Button onClick={() => setContactDialogOpen(false)} sx={{ color: '#64748B' }} fullWidth={isMobile}>Cancel</Button>
+        <ActionButton variant="contained" sx={{ bgcolor: '#0025DD' }} onClick={handleSaveContact} startIcon={<SaveIcon />} fullWidth={isMobile}>
           {currentContact?.id ? 'Update Contact' : 'Add Contact'}
         </ActionButton>
       </DialogActions>
@@ -3132,11 +3329,13 @@ const SuperAdminDashboard = () => {
     <Dialog
       open={deleteConfirmDialog.open}
       onClose={() => setDeleteConfirmDialog({ open: false, item: null, type: '' })}
-      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400 } }}
+      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400, mx: 2 } }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: '#EF4444', color: 'white' }}>
         <WarningIcon />
-        <Typography variant="h6" fontWeight="bold">Confirm Delete</Typography>
+        <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}>
+          Confirm Delete
+        </Typography>
       </DialogTitle>
       <DialogContent sx={{ mt: 2 }}>
         <DialogContentText>
@@ -3144,11 +3343,12 @@ const SuperAdminDashboard = () => {
           This action cannot be undone and will permanently remove all associated data.
         </DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ p: 2, gap: 1 }}>
+      <DialogActions sx={{ p: 2, gap: 1, flexDirection: isMobile ? 'column' : 'row' }}>
         <Button 
           onClick={() => setDeleteConfirmDialog({ open: false, item: null, type: '' })}
           variant="outlined"
           sx={{ borderColor: '#64748B', color: '#64748B' }}
+          fullWidth={isMobile}
         >
           Cancel
         </Button>
@@ -3157,6 +3357,7 @@ const SuperAdminDashboard = () => {
           variant="contained"
           sx={{ bgcolor: '#EF4444', '&:hover': { bgcolor: '#DC2626' } }}
           startIcon={<DeleteIcon />}
+          fullWidth={isMobile}
         >
           Delete Permanently
         </Button>
@@ -3169,11 +3370,17 @@ const SuperAdminDashboard = () => {
     <Dialog
       open={blockConfirmDialog.open}
       onClose={() => setBlockConfirmDialog({ open: false, item: null, type: '' })}
-      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400 } }}
+      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400, mx: 2 } }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: blockConfirmDialog.item?.status === 'active' ? '#EF4444' : '#10B981', color: 'white' }}>
+      <DialogTitle sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: 1, 
+        bgcolor: blockConfirmDialog.item?.status === 'active' ? '#EF4444' : '#10B981', 
+        color: 'white' 
+      }}>
         <BlockIcon />
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}>
           {blockConfirmDialog.item?.status === 'active' ? 'Confirm Block User' : 'Confirm Unblock User'}
         </Typography>
       </DialogTitle>
@@ -3185,11 +3392,12 @@ const SuperAdminDashboard = () => {
             : ' This user will regain full access to the platform.'}
         </DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ p: 2, gap: 1 }}>
+      <DialogActions sx={{ p: 2, gap: 1, flexDirection: isMobile ? 'column' : 'row' }}>
         <Button 
           onClick={() => setBlockConfirmDialog({ open: false, item: null, type: '' })}
           variant="outlined"
           sx={{ borderColor: '#64748B', color: '#64748B' }}
+          fullWidth={isMobile}
         >
           Cancel
         </Button>
@@ -3197,6 +3405,7 @@ const SuperAdminDashboard = () => {
           onClick={confirmBlockUser}
           variant="contained"
           sx={{ bgcolor: blockConfirmDialog.item?.status === 'active' ? '#EF4444' : '#10B981' }}
+          fullWidth={isMobile}
         >
           {blockConfirmDialog.item?.status === 'active' ? 'Yes, Block User' : 'Yes, Unblock User'}
         </Button>
@@ -3214,18 +3423,26 @@ const SuperAdminDashboard = () => {
         <DataTable title="📦 Deliveries Management" data={deliveries} type="delivery" showStatusFilter
           columns={[
             { key: 'id', label: 'Delivery ID', render: (d) => (
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#0025DD' }}>{d.id}</Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#0025DD', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {d.id}
+              </Typography>
             )},
             { key: 'rider_name', label: 'Rider' },
             { key: 'package_type', label: 'Package' },
             { key: 'pickup_location', label: 'From', render: (d) => (
-              <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.pickup_location}</Typography>
+              <Typography variant="body2" sx={{ maxWidth: { xs: 80, sm: 120, md: 150 }, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {d.pickup_location}
+              </Typography>
             )},
             { key: 'drop_off_location', label: 'To', render: (d) => (
-              <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.drop_off_location}</Typography>
+              <Typography variant="body2" sx={{ maxWidth: { xs: 80, sm: 120, md: 150 }, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {d.drop_off_location}
+              </Typography>
             )},
             { key: 'delivery_fee', label: 'Fee', render: (d) => (
-              <Typography variant="body2" fontWeight="bold">UGX {formatCurrency(d.delivery_fee)}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(d.delivery_fee)}
+              </Typography>
             )},
             { key: 'status', label: 'Status', render: (d) => <StatusChip status={d.status} label={d.status} /> },
           ]}
@@ -3235,17 +3452,21 @@ const SuperAdminDashboard = () => {
         <DataTable title="💰 Expenses Management" data={expenses} type="expense" showStatusFilter
           columns={[
             { key: 'id', label: 'Expense ID', render: (e) => (
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#EF4444' }}>{e.id}</Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#EF4444', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {e.id}
+              </Typography>
             )},
             { key: 'rider_name', label: 'Rider' },
             { key: 'category', label: 'Category', render: (e) => (
               <Chip label={e.category} size="small" sx={{ bgcolor: alpha('#F59E0B', 0.1), color: '#92400E' }} />
             )},
             { key: 'amount', label: 'Amount', render: (e) => (
-              <Typography variant="body2" fontWeight="bold" color="#EF4444">UGX {formatCurrency(e.amount)}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#EF4444" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(e.amount)}
+              </Typography>
             )},
             { key: 'description', label: 'Description', render: (e) => (
-              <Typography variant="body2" sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography variant="body2" sx={{ maxWidth: { xs: 100, sm: 150, md: 200 }, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                 {e.description || 'N/A'}
               </Typography>
             )},
@@ -3258,7 +3479,9 @@ const SuperAdminDashboard = () => {
           columns={[
             { key: 'name', label: 'Group Name', render: (g) => (
               <Box>
-                <Typography variant="body2" fontWeight="bold">{g.name}</Typography>
+                <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                  {g.name}
+                </Typography>
                 <Typography variant="caption" color="text.secondary">{g.group_type}</Typography>
               </Box>
             )},
@@ -3268,19 +3491,23 @@ const SuperAdminDashboard = () => {
                 <LinearProgress 
                   variant="determinate" 
                   value={(g.member_count / g.max_members) * 100} 
-                  sx={{ height: 6, borderRadius: 3, bgcolor: alpha('#8B5CF6', 0.1), '& .MuiLinearProgress-bar': { bgcolor: '#8B5CF6' }, width: 80 }}
+                  sx={{ height: 6, borderRadius: 3, bgcolor: alpha('#8B5CF6', 0.1), '& .MuiLinearProgress-bar': { bgcolor: '#8B5CF6' }, width: { xs: 50, sm: 80 } }}
                 />
                 <Typography variant="caption">{g.member_count}/{g.max_members}</Typography>
               </Box>
             )},
             { key: 'contrib_amount', label: 'Contribution', render: (g) => (
               <Box>
-                <Typography variant="body2">UGX {formatCurrency(g.contrib_amount)}</Typography>
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                  UGX {formatCurrency(g.contrib_amount)}
+                </Typography>
                 <Typography variant="caption" color="text.secondary">{g.contrib_frequency}</Typography>
               </Box>
             )},
             { key: 'total_pool', label: 'Total Pool', render: (g) => (
-              <Typography variant="body2" fontWeight="bold" color="#8B5CF6">UGX {formatCurrency(g.total_pool)}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#8B5CF6" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(g.total_pool)}
+              </Typography>
             )},
             { key: 'status', label: 'Status', render: (g) => <StatusChip status={g.status} label={g.status} /> },
           ]}
@@ -3291,21 +3518,33 @@ const SuperAdminDashboard = () => {
           columns={[
             { key: 'rider_name', label: 'Rider', render: (w) => (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 28, height: 28, bgcolor: '#06B6D4', fontSize: '0.7rem' }}>{w.rider_name?.charAt(0)}</Avatar>
-                <Typography variant="body2">{w.rider_name}</Typography>
+                <Avatar sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, bgcolor: '#06B6D4', fontSize: '0.7rem' }}>
+                  {w.rider_name?.charAt(0)}
+                </Avatar>
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                  {w.rider_name}
+                </Typography>
               </Box>
             )},
             { key: 'balance', label: 'Balance', render: (w) => (
-              <Typography variant="body2" fontWeight="bold">UGX {formatCurrency(w.balance)}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(w.balance)}
+              </Typography>
             )},
             { key: 'available_balance', label: 'Available', render: (w) => (
-              <Typography variant="body2" fontWeight="bold" color="#10B981">UGX {formatCurrency(w.available_balance)}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(w.available_balance)}
+              </Typography>
             )},
             { key: 'reserved_balance', label: 'Reserved', render: (w) => (
-              <Typography variant="body2">UGX {formatCurrency(w.reserved_balance)}</Typography>
+              <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(w.reserved_balance)}
+              </Typography>
             )},
             { key: 'total_deposits', label: 'Total Deposits', render: (w) => (
-              <Typography variant="body2">UGX {formatCurrency(w.total_deposits)}</Typography>
+              <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(w.total_deposits)}
+              </Typography>
             )},
             { key: 'is_active', label: 'Status', render: (w) => (
               <StatusChip status={w.is_active ? 'active' : 'inactive'} label={w.is_active ? 'Active' : 'Inactive'} />
@@ -3319,11 +3558,13 @@ const SuperAdminDashboard = () => {
           columns={[
             { key: 'full_name', label: 'Name', render: (c) => (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ width: 32, height: 32, bgcolor: getTypeColor(c.type), fontSize: '0.8rem' }}>
+                <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: getTypeColor(c.type), fontSize: '0.8rem' }}>
                   {c.full_name?.charAt(0)}
                 </Avatar>
                 <Box>
-                  <Typography variant="body2" fontWeight="bold">{c.full_name}</Typography>
+                  <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                    {c.full_name}
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">{c.email}</Typography>
                 </Box>
               </Box>
@@ -3335,7 +3576,9 @@ const SuperAdminDashboard = () => {
             { key: 'bussiness_name', label: 'Business' },
             { key: 'location', label: 'Location' },
             { key: 'loyalty_points', label: 'Points', render: (c) => (
-              <Typography variant="body2" fontWeight="bold" color="#F59E0B">{c.loyalty_points || 0}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#F59E0B" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {c.loyalty_points || 0}
+              </Typography>
             )},
             { key: 'status', label: 'Status', render: (c) => <StatusChip status={c.status} label={c.status} /> },
           ]}
@@ -3346,21 +3589,31 @@ const SuperAdminDashboard = () => {
           columns={[
             { key: 'rider_name', label: 'Agent', render: (a) => (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 28, height: 28, bgcolor: '#6366F1', fontSize: '0.7rem' }}>{a.rider_name?.charAt(0)}</Avatar>
+                <Avatar sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, bgcolor: '#6366F1', fontSize: '0.7rem' }}>
+                  {a.rider_name?.charAt(0)}
+                </Avatar>
                 <Box>
-                  <Typography variant="body2" fontWeight="bold">{a.rider_name}</Typography>
+                  <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                    {a.rider_name}
+                  </Typography>
                   <Chip label={a.tier} size="small" sx={{ height: 18, fontSize: '0.6rem', bgcolor: alpha('#6366F1', 0.1), color: '#6366F1' }} />
                 </Box>
               </Box>
             )},
             { key: 'referral_code', label: 'Referral Code', render: (a) => (
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold' }}>{a.referral_code}</Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {a.referral_code}
+              </Typography>
             )},
             { key: 'total_referrals', label: 'Referrals', render: (a) => (
-              <Typography variant="body2" fontWeight="bold">{a.total_referrals}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {a.total_referrals}
+              </Typography>
             )},
             { key: 'total_commission', label: 'Commission', render: (a) => (
-              <Typography variant="body2" fontWeight="bold" color="#10B981">UGX {formatCurrency(a.total_commission)}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#10B981" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(a.total_commission)}
+              </Typography>
             )},
             { key: 'region', label: 'Region' },
             { key: 'is_active', label: 'Status', render: (a) => (
@@ -3373,18 +3626,24 @@ const SuperAdminDashboard = () => {
         <DataTable title="🏦 Pending Withdrawals" data={withdrawals} type="withdrawal" showStatusFilter
           columns={[
             { key: 'id', label: 'Request ID', render: (w) => (
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold' }}>{w.id}</Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {w.id}
+              </Typography>
             )},
             { key: 'rider_name', label: 'Rider' },
             { key: 'amount', label: 'Amount', render: (w) => (
-              <Typography variant="body2" fontWeight="bold" color="#0025DD">UGX {formatCurrency(w.amount)}</Typography>
+              <Typography variant="body2" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                UGX {formatCurrency(w.amount)}
+              </Typography>
             )},
             { key: 'payment_method', label: 'Method', render: (w) => (
               <Chip label={w.payment_method?.replace('_', ' ')} size="small" sx={{ textTransform: 'capitalize' }} />
             )},
             { key: 'phone_number', label: 'Phone' },
             { key: 'created_at', label: 'Requested', render: (w) => (
-              <Typography variant="body2">{new Date(w.created_at).toLocaleDateString('en-UG')}</Typography>
+              <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                {new Date(w.created_at).toLocaleDateString('en-UG')}
+              </Typography>
             )},
             { key: 'status', label: 'Status', render: (w) => <StatusChip status={w.status} label={w.status} /> },
           ]}
@@ -3406,18 +3665,26 @@ const SuperAdminDashboard = () => {
       
       <MainContent>
         {/* Mobile Header */}
-        {isMobile && (
+        {isTablet && (
           <Box sx={{ 
-            p: 2, bgcolor: 'white', borderBottom: '1px solid rgba(0,0,0,0.08)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            position: 'sticky', top: 0, zIndex: 100,
+            p: { xs: 1.5, sm: 2 }, 
+            bgcolor: 'white', 
+            borderBottom: '1px solid rgba(0,0,0,0.08)',
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            position: 'sticky', 
+            top: 0, 
+            zIndex: 100,
           }}>
             <IconButton onClick={() => setMobileSidebarOpen(true)}>
               <MenuIcon />
             </IconButton>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <MotorcycleIcon sx={{ color: '#0025DD' }} />
-              <Typography variant="h6" fontWeight="bold" color="#0025DD">Enfuna</Typography>
+              <Typography variant="h6" fontWeight="bold" color="#0025DD" sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>
+                Enfuna
+              </Typography>
             </Box>
             <IconButton onClick={handleRefresh} disabled={refreshing}>
               {refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
@@ -3426,12 +3693,21 @@ const SuperAdminDashboard = () => {
         )}
         
         {/* Mobile Tab Navigation */}
-        {isMobile && (
-          <Paper sx={{ borderRadius: 0, position: 'sticky', top: 56, zIndex: 99 }}>
+        {isTablet && (
+          <Paper sx={{ borderRadius: 0, position: 'sticky', top: isMobile ? 56 : 64, zIndex: 99 }}>
             <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
-              sx={{ bgcolor: 'white', borderBottom: '1px solid rgba(0,0,0,0.08)', '& .MuiTab-root': { minHeight: 48, textTransform: 'none', fontSize: '0.75rem' } }}>
+              sx={{ 
+                bgcolor: 'white', 
+                borderBottom: '1px solid rgba(0,0,0,0.08)', 
+                '& .MuiTab-root': { 
+                  minHeight: { xs: 44, sm: 48 }, 
+                  textTransform: 'none', 
+                  fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' },
+                  px: { xs: 1, sm: 1.5 }
+                } 
+              }}>
               {sidebarItems.map(item => (
-                <Tab key={item.tab} label={item.label} icon={<item.icon sx={{ fontSize: 16 }} />} iconPosition="start" />
+                <Tab key={item.tab} label={item.label} icon={<item.icon sx={{ fontSize: { xs: 14, sm: 16 } }} />} iconPosition="start" />
               ))}
             </Tabs>
           </Paper>
@@ -3450,7 +3726,7 @@ const SuperAdminDashboard = () => {
         )}
       </MainContent>
 
-      {/* Dialogs */}
+      {/* Details Modal - Mobile Responsive */}
       {showDetailsModal && (
         <Dialog 
           open={showDetailsModal} 
@@ -3462,13 +3738,15 @@ const SuperAdminDashboard = () => {
           PaperProps={{ 
             sx: { 
               borderRadius: { xs: 0, sm: 4 },
-              bgcolor: '#F8FAFC'
+              bgcolor: '#F8FAFC',
+              mx: { xs: 0, sm: 2 },
+              my: { xs: 0, sm: 2 },
             } 
           }}
         >
-          <Box sx={{ bgcolor: '#0025DD', color: 'white', p: 2.5 }}>
+          <Box sx={{ bgcolor: '#0025DD', color: 'white', p: { xs: 2, sm: 2.5 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6" fontWeight="bold">
+              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>
                 {modalType === 'rider' ? 'Rider Details' : 
                  modalType === 'trip' ? 'Trip Details' :
                  modalType === 'expense' ? 'Expense Details' :
@@ -3484,10 +3762,10 @@ const SuperAdminDashboard = () => {
               </IconButton>
             </Box>
           </Box>
-          <DialogContent sx={{ p: 3 }}>
+          <DialogContent sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
             {renderDetailsModal()}
           </DialogContent>
-          <DialogActions sx={{ p: 2.5, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          <DialogActions sx={{ p: { xs: 2, sm: 2.5 }, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
             <Button onClick={handleCloseDetailsModal} sx={{ color: '#64748B' }}>Close</Button>
           </DialogActions>
         </Dialog>
@@ -3501,10 +3779,22 @@ const SuperAdminDashboard = () => {
       <ScrollToTop />
 
       {/* Snackbar */}
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} TransitionComponent={Slide}>
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} 
+        TransitionComponent={Slide}
+        sx={{ 
+          '& .MuiAlert-root': { 
+            borderRadius: { xs: 2, sm: 2 }, 
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)', 
+            minWidth: { xs: '90vw', sm: 300 },
+            maxWidth: { xs: '95vw', sm: 400 }
+          } 
+        }}
+      >
         <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}
-          sx={{ borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', minWidth: 300 }}
           variant="filled">
           {snackbar.message}
         </Alert>
