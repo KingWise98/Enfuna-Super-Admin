@@ -16,6 +16,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
 import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -1066,6 +1067,43 @@ function ScrollToTop() {
   );
 }
 
+// ==================== DETAILS MODAL COMPONENT ====================
+const DetailField = ({ label, value, icon: Icon, color }) => (
+  <Box sx={{ mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+      {Icon && <Icon sx={{ fontSize: 14, color: color || '#64748B' }} />}
+      <Typography variant="caption" color="text.secondary" fontWeight={600}>
+        {label}
+      </Typography>
+    </Box>
+    <Typography variant="body2" fontWeight={500} sx={{ pl: Icon ? 2.5 : 0 }}>
+      {value || 'N/A'}
+    </Typography>
+  </Box>
+);
+
+const DetailSection = ({ title, children, icon: Icon, color }) => (
+  <Paper 
+    elevation={0} 
+    sx={{ 
+      p: 2.5, 
+      borderRadius: 3, 
+      bgcolor: 'white', 
+      border: '1px solid rgba(0,0,0,0.06)',
+      height: '100%'
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+      {Icon && <Icon sx={{ color: color || '#0025DD', fontSize: 20 }} />}
+      <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#1E293B' }}>
+        {title}
+      </Typography>
+    </Box>
+    <Divider sx={{ mb: 2 }} />
+    {children}
+  </Paper>
+);
+
 // ==================== MAIN COMPONENT ====================
 const SuperAdminDashboard = () => {
   const theme = useTheme();
@@ -1118,7 +1156,7 @@ const SuperAdminDashboard = () => {
   });
 
   // Dummy Data
-  const [riders] = useState(DUMMY_RIDERS);
+  const [riders, setRiders] = useState(DUMMY_RIDERS);
   const [trips] = useState(DUMMY_TRIPS);
   const [expenses] = useState(DUMMY_EXPENSES);
   const [deliveries] = useState(DUMMY_DELIVERIES);
@@ -1132,6 +1170,8 @@ const SuperAdminDashboard = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalType, setModalType] = useState('');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState({ open: false, item: null, type: '' });
+  const [blockConfirmDialog, setBlockConfirmDialog] = useState({ open: false, item: null, type: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -1165,15 +1205,59 @@ const SuperAdminDashboard = () => {
     setShowDetailsModal(true);
   };
 
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedItem(null);
+    setModalType('');
+  };
+
+  // Admin: Block User
+  const handleBlockUser = (item, type) => {
+    setBlockConfirmDialog({ open: true, item, type });
+  };
+
+  const confirmBlockUser = () => {
+    const { item, type } = blockConfirmDialog;
+    if (type === 'rider') {
+      setRiders(prevRiders => 
+        prevRiders.map(rider => 
+          rider.id === item.id 
+            ? { ...rider, status: rider.status === 'active' ? 'suspended' : 'active' }
+            : rider
+        )
+      );
+      showSnackbar(`${item.full_names} has been ${item.status === 'active' ? 'blocked' : 'unblocked'} successfully`, 'success');
+    }
+    setBlockConfirmDialog({ open: false, item: null, type: '' });
+  };
+
+  // Admin: Delete User with Confirmation Popup
+  const handleDeleteUser = (item, type) => {
+    setDeleteConfirmDialog({ open: true, item, type });
+  };
+
+  const confirmDeleteUser = () => {
+    const { item, type } = deleteConfirmDialog;
+    if (type === 'rider') {
+      setRiders(prevRiders => prevRiders.filter(rider => rider.id !== item.id));
+      showSnackbar(`${item.full_names} has been deleted successfully`, 'error');
+    } else if (type === 'contact') {
+      setContacts(prevContacts => prevContacts.filter(contact => contact.id !== item.id));
+      showSnackbar(`${item.full_name} has been deleted successfully`, 'error');
+    }
+    setDeleteConfirmDialog({ open: false, item: null, type: '' });
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       active: '#10B981',
       completed: '#10B981',
+      approved: '#10B981',
       pending: '#F59E0B',
       inactive: '#6B7280',
+      suspended: '#EF4444',
       cancelled: '#EF4444',
       rejected: '#EF4444',
-      suspended: '#EF4444',
     };
     return colors[status?.toLowerCase()] || '#6B7280';
   };
@@ -1227,9 +1311,10 @@ const SuperAdminDashboard = () => {
   };
 
   const handleDeleteContact = (id) => {
-    if (window.confirm('Are you sure you want to delete this contact? This action cannot be undone.')) {
-      setContacts(contacts.filter(c => c.id !== id));
-      showSnackbar('Contact deleted successfully', 'warning');
+    // This is now handled by the generic delete confirmation
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      handleDeleteUser(contact, 'contact');
     }
   };
 
@@ -1394,6 +1479,631 @@ const SuperAdminDashboard = () => {
     { label: 'Agents', icon: PersonAddIcon, tab: 8, badge: agents.length },
     { label: 'Withdrawals', icon: PaymentIcon, tab: 9, badge: withdrawals.filter(w => w.status === 'pending').length },
   ];
+
+  // Details Modal Renderer
+  const renderDetailsModal = () => {
+    if (!selectedItem) return null;
+
+    const renderRiderDetails = () => (
+      <Box>
+        {/* Header Section */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          mb: 3, 
+          pb: 3, 
+          borderBottom: '1px solid',
+          borderColor: 'divider'
+        }}>
+          <Avatar sx={{ width: 72, height: 72, bgcolor: '#0025DD', fontSize: 28, fontWeight: 'bold' }}>
+            {selectedItem.full_names?.charAt(0)}
+          </Avatar>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.full_names}</Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Stack direction="row" spacing={1} mt={1}>
+              <Chip 
+                label={selectedItem.status} 
+                size="small" 
+                sx={{ bgcolor: alpha(getStatusColor(selectedItem.status), 0.1), color: getStatusColor(selectedItem.status), fontWeight: 600 }}
+              />
+              {selectedItem.is_verified && (
+                <Chip 
+                  icon={<VerifiedUserIcon sx={{ fontSize: 14 }} />}
+                  label="Verified" 
+                  size="small" 
+                  sx={{ bgcolor: alpha('#10B981', 0.1), color: '#10B981', fontWeight: 600 }}
+                />
+              )}
+              {selectedItem.is_agent && (
+                <Chip 
+                  icon={<AdminPanelSettingsIcon sx={{ fontSize: 14 }} />}
+                  label="Agent" 
+                  size="small" 
+                  sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }}
+                />
+              )}
+            </Stack>
+          </Box>
+        </Box>
+
+        {/* Details Grid Layout */}
+        <Grid container spacing={2}>
+          {/* Personal Information */}
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Personal Information" icon={PersonIcon} color="#0025DD">
+              <DetailField label="Full Name" value={selectedItem.full_names} icon={PersonIcon} color="#0025DD" />
+              <DetailField label="Email Address" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
+              <DetailField label="Phone Number" value={selectedItem.phone_number} icon={PhoneIcon} color="#10B981" />
+              <DetailField label="Member Since" value={new Date(selectedItem.created_at).toLocaleDateString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          {/* Vehicle Information */}
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Vehicle Information" icon={MotorcycleIcon} color="#F59E0B">
+              <DetailField label="Vehicle Type" value={selectedItem.vehicle_type} icon={DirectionsBikeIcon} color="#F59E0B" />
+              <DetailField label="Motorcycle Model" value={selectedItem.motorcycle_model} icon={TwoWheelerIcon} color="#8B5CF6" />
+              <DetailField label="License Plate" value={selectedItem.license_plate} icon={LocalShippingIcon} color="#06B6D4" />
+              <DetailField label="Rider Type" value={selectedItem.rider_type?.replace('_', ' ')} icon={WorkIcon} color="#EC4899" />
+            </DetailSection>
+          </Grid>
+
+          {/* Location & Stage */}
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Location Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Stage" value={selectedItem.stage} icon={LocationOnIcon} color="#EF4444" />
+              <DetailField label="Division" value={selectedItem.division} icon={BusinessIcon} color="#8B5CF6" />
+              <DetailField label="District" value={selectedItem.district} icon={FlagIcon} color="#0025DD" />
+            </DetailSection>
+          </Grid>
+
+          {/* Performance Metrics */}
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#0025DD">
+                      {selectedItem.total_trips?.toLocaleString() || '0'}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Total Trips</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#10B981">
+                      UGX {formatCurrency(selectedItem.total_earnings)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Total Earnings</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                      <StarIcon sx={{ fontSize: 18, color: '#F59E0B' }} />
+                      <Typography variant="h5" fontWeight="bold" color="#F59E0B">
+                        {selectedItem.rating || '0.0'}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">Rating</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#8B5CF6">
+                      {selectedItem.total_deliveries || '0'}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Deliveries</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 3 }} />
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+          <ActionButton
+            variant="contained"
+            startIcon={selectedItem.status === 'active' ? <BlockIcon /> : <CheckIcon />}
+            onClick={() => {
+              handleBlockUser(selectedItem, 'rider');
+              handleCloseDetailsModal();
+            }}
+            sx={{ bgcolor: selectedItem.status === 'active' ? '#EF4444' : '#10B981' }}
+          >
+            {selectedItem.status === 'active' ? 'Block User' : 'Unblock User'}
+          </ActionButton>
+          <ActionButton
+            variant="outlined"
+            startIcon={<DeleteIcon />}
+            onClick={() => {
+              handleDeleteUser(selectedItem, 'rider');
+              handleCloseDetailsModal();
+            }}
+            sx={{ borderColor: '#EF4444', color: '#EF4444' }}
+          >
+            Delete User
+          </ActionButton>
+        </Box>
+      </Box>
+    );
+
+    const renderTripDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <DirectionsBikeIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
+              <DetailField label="Destination" value={selectedItem.destination} icon={LocationOnIcon} color="#EF4444" />
+              <DetailField label="Distance" value={selectedItem.distance} icon={LocalShippingIcon} color="#6366F1" />
+              <DetailField label="Duration" value={selectedItem.duration} icon={ScheduleIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#10B981">
+                  UGX {formatCurrency(selectedItem.trip_fare)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Trip Fare</Typography>
+              </Box>
+              <DetailField label="Payment Method" value={selectedItem.payment_method?.replace('_', ' ')} icon={PaymentIcon} color="#6366F1" />
+              <DetailField label="Payment Provider" value={selectedItem.payment_provider || 'N/A'} icon={CreditCardIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
+              <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.completed_at && (
+                <DetailField label="Completed At" value={new Date(selectedItem.completed_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderExpenseDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#EF4444', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <ReceiptIcon sx={{ fontSize: 32, color: '#EF4444' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Expense Information" icon={InfoIcon} color="#0025DD">
+              <DetailField label="Category" value={selectedItem.category} icon={FolderIcon} color="#0025DD" />
+              <DetailField label="Expense Type" value={selectedItem.expense_type} icon={BuildIcon} color="#8B5CF6" />
+              <DetailField label="Description" value={selectedItem.description} icon={DescriptionIcon} color="#6366F1" />
+              <DetailField label="Date" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#EF4444">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#EF4444">
+                  UGX {formatCurrency(selectedItem.amount)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Expense Amount</Typography>
+              </Box>
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              {selectedItem.approved_by && (
+                <DetailField label="Approved By" value={selectedItem.approved_by} icon={VerifiedUserIcon} color="#10B981" />
+              )}
+              {selectedItem.rejection_reason && (
+                <DetailField label="Rejection Reason" value={selectedItem.rejection_reason} icon={WarningIcon} color="#EF4444" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderContactDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <ContactsIcon sx={{ fontSize: 32, color: getTypeColor(selectedItem.type) }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.full_name}</Typography>
+            <Stack direction="row" spacing={1} mt={0.5}>
+              <Chip label={selectedItem.type} size="small" sx={{ bgcolor: alpha(getTypeColor(selectedItem.type), 0.1), color: getTypeColor(selectedItem.type), fontWeight: 600 }} />
+              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Personal Information" icon={PersonIcon} color={getTypeColor(selectedItem.type)}>
+              <DetailField label="Full Name" value={selectedItem.full_name} icon={PersonIcon} color={getTypeColor(selectedItem.type)} />
+              <DetailField label="Email" value={selectedItem.email} icon={EmailIcon} color="#6366F1" />
+              <DetailField label="Phone" value={selectedItem.phone} icon={PhoneIcon} color="#10B981" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Business Information" icon={BusinessIcon} color="#8B5CF6">
+              <DetailField label="Business Name" value={selectedItem.bussiness_name} icon={BusinessIcon} color="#8B5CF6" />
+              <DetailField label="Location" value={selectedItem.location} icon={LocationOnIcon} color="#EF4444" />
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2, mt: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <StarsIcon sx={{ color: '#F59E0B' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#F59E0B">
+                    {selectedItem.loyalty_points || 0}
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Loyalty Points</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <DetailSection title="Activity Summary" icon={AssessmentIcon} color="#10B981">
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#0025DD">{selectedItem.total_trips || 0}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Trips</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_spent || 0)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Spent</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#6366F1">{selectedItem.total_orders || 0}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Orders</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderWalletDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#06B6D4', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <AccountBalanceIcon sx={{ fontSize: 32, color: '#06B6D4' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">Wallet: {selectedItem.rider_name}</Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" sx={{ mt: 0.5 }} status={selectedItem.is_active ? 'active' : 'inactive'} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={12}>
+            <DetailSection title="Balance Overview" icon={AccountBalanceWalletIcon} color="#06B6D4">
+              <Grid container spacing={2}>
+                <Grid item xs={6} md={3}>
+                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#06B6D4', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#06B6D4">UGX {formatCurrency(selectedItem.balance)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Balance</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.available_balance)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Available</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.reserved_balance)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Reserved</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#8B5CF6">{selectedItem.currency}</Typography>
+                    <Typography variant="caption" color="text.secondary">Currency</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Transaction Summary" icon={TrendingUpIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <TrendingUpIcon sx={{ color: '#10B981' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_deposits)}</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Total Deposits</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Withdrawal Summary" icon={TrendingDownIcon} color="#EF4444">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#EF4444', 0.05), borderRadius: 2, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <TrendingDownIcon sx={{ color: '#EF4444' }} />
+                  <Typography variant="h5" fontWeight="bold" color="#EF4444">UGX {formatCurrency(selectedItem.total_withdrawals)}</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">Total Withdrawals</Typography>
+              </Box>
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderGroupDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#8B5CF6', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <GroupsIcon sx={{ fontSize: 32, color: '#8B5CF6' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.name}</Typography>
+            <Stack direction="row" spacing={1} mt={0.5}>
+              <Chip label={selectedItem.group_type} size="small" sx={{ bgcolor: alpha('#8B5CF6', 0.1), color: '#8B5CF6', fontWeight: 600 }} />
+              <Chip label={selectedItem.status} size="small" status={selectedItem.status} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={12}>
+            <DetailSection title="Group Information" icon={InfoIcon} color="#8B5CF6">
+              <DetailField label="Description" value={selectedItem.description} icon={DescriptionIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Membership" icon={PeopleIcon} color="#0025DD">
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {selectedItem.member_count} / {selectedItem.max_members} Members
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {Math.round((selectedItem.member_count / selectedItem.max_members) * 100)}% Full
+                  </Typography>
+                </Box>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(selectedItem.member_count / selectedItem.max_members) * 100} 
+                  sx={{ 
+                    height: 8, 
+                    borderRadius: 4, 
+                    bgcolor: alpha('#0025DD', 0.1),
+                    '& .MuiLinearProgress-bar': { 
+                      bgcolor: '#0025DD',
+                      borderRadius: 4 
+                    } 
+                  }} 
+                />
+              </Box>
+              <DetailField label="Admin" value={selectedItem.admin_rider} icon={AdminPanelSettingsIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#8B5CF6', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#8B5CF6">
+                  UGX {formatCurrency(selectedItem.total_pool)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Total Pool</Typography>
+              </Box>
+              <DetailField label="Contribution" value={`UGX ${formatCurrency(selectedItem.contrib_amount)}`} icon={PaymentIcon} color="#10B981" />
+              <DetailField label="Frequency" value={selectedItem.contrib_frequency} icon={ScheduleIcon} color="#F59E0B" />
+              <DetailField label="Visibility" value={selectedItem.is_public ? 'Public Group' : 'Private Group'} icon={selectedItem.is_public ? VisibilityIcon : VisibilityOffIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderAgentDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#6366F1', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <PersonAddIcon sx={{ fontSize: 32, color: '#6366F1' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.rider_name}</Typography>
+            <Typography variant="body2" color="text.secondary">{selectedItem.id}</Typography>
+            <Stack direction="row" spacing={1} mt={0.5}>
+              <Chip label={selectedItem.tier} size="small" sx={{ bgcolor: alpha('#6366F1', 0.1), color: '#6366F1', fontWeight: 600 }} />
+              <Chip label={selectedItem.is_active ? 'Active' : 'Inactive'} size="small" status={selectedItem.is_active ? 'active' : 'inactive'} />
+            </Stack>
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Agent Information" icon={InfoIcon} color="#6366F1">
+              <DetailField label="Referral Code" value={selectedItem.referral_code} icon={SaveIcon} color="#6366F1" />
+              <DetailField label="Tier" value={selectedItem.tier} icon={StarsIcon} color="#F59E0B" />
+              <DetailField label="Region" value={selectedItem.region} icon={LocationOnIcon} color="#EF4444" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Performance Metrics" icon={InsightsIcon} color="#10B981">
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#6366F1', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#6366F1">{selectedItem.total_referrals}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Referrals</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#10B981">{selectedItem.active_referrals}</Typography>
+                    <Typography variant="caption" color="text.secondary">Active Referrals</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#10B981', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.total_commission)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Commission</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: alpha('#F59E0B', 0.05), borderRadius: 2 }}>
+                    <Typography variant="h5" fontWeight="bold" color="#F59E0B">UGX {formatCurrency(selectedItem.available_commission)}</Typography>
+                    <Typography variant="caption" color="text.secondary">Available Commission</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderDeliveryDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <LocalShippingIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="People Involved" icon={PeopleIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Customer" value={selectedItem.customer_name} icon={PersonIcon} color="#8B5CF6" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Package Details" icon={FolderIcon} color="#F59E0B">
+              <DetailField label="Package Type" value={selectedItem.package_type} icon={FolderIcon} color="#F59E0B" />
+              <DetailField label="Package Weight" value={selectedItem.package_weight} icon={LocalShippingIcon} color="#06B6D4" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Route Details" icon={LocationOnIcon} color="#EF4444">
+              <DetailField label="Pickup Location" value={selectedItem.pickup_location} icon={LocationOnIcon} color="#10B981" />
+              <DetailField label="Drop-off Location" value={selectedItem.drop_off_location} icon={LocationOnIcon} color="#EF4444" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#10B981', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#10B981">UGX {formatCurrency(selectedItem.delivery_fee)}</Typography>
+                <Typography variant="caption" color="text.secondary">Delivery Fee</Typography>
+              </Box>
+              <DetailField label="Payment Method" value={selectedItem.payment_method} icon={PaymentIcon} color="#6366F1" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Timeline" icon={ScheduleIcon} color="#F59E0B">
+              <DetailField label="Created At" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.completed_at && (
+                <DetailField label="Completed At" value={new Date(selectedItem.completed_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    const renderWithdrawalDetails = () => (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <Box sx={{ bgcolor: alpha('#0025DD', 0.1), borderRadius: 2, p: 1.5, display: 'flex' }}>
+            <PaymentIcon sx={{ fontSize: 32, color: '#0025DD' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">{selectedItem.id}</Typography>
+            <Chip label={selectedItem.status} size="small" sx={{ mt: 0.5 }} status={selectedItem.status} />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Withdrawal Information" icon={InfoIcon} color="#0025DD">
+              <DetailField label="Rider" value={selectedItem.rider_name} icon={MotorcycleIcon} color="#0025DD" />
+              <DetailField label="Payment Method" value={selectedItem.payment_method?.replace('_', ' ')} icon={PaymentIcon} color="#6366F1" />
+              <DetailField label="Phone Number" value={selectedItem.phone_number} icon={PhoneIcon} color="#10B981" />
+            </DetailSection>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailSection title="Financial Details" icon={AccountBalanceWalletIcon} color="#10B981">
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: alpha('#0025DD', 0.05), borderRadius: 2, mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold" color="#0025DD">UGX {formatCurrency(selectedItem.amount)}</Typography>
+                <Typography variant="caption" color="text.secondary">Withdrawal Amount</Typography>
+              </Box>
+              <DetailField label="Requested Date" value={new Date(selectedItem.created_at).toLocaleString('en-UG')} icon={CalendarTodayIcon} color="#F59E0B" />
+              {selectedItem.approved_at && (
+                <DetailField label="Approved Date" value={new Date(selectedItem.approved_at).toLocaleString('en-UG')} icon={CheckCircleIcon} color="#10B981" />
+              )}
+              {selectedItem.rejection_reason && (
+                <DetailField label="Rejection Reason" value={selectedItem.rejection_reason} icon={WarningIcon} color="#EF4444" />
+              )}
+            </DetailSection>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+
+    switch (modalType) {
+      case 'rider': return renderRiderDetails();
+      case 'trip': return renderTripDetails();
+      case 'expense': return renderExpenseDetails();
+      case 'contact': return renderContactDetails();
+      case 'wallet': return renderWalletDetails();
+      case 'group': return renderGroupDetails();
+      case 'agent': return renderAgentDetails();
+      case 'delivery': return renderDeliveryDetails();
+      case 'withdrawal': return renderWithdrawalDetails();
+      default: return null;
+    }
+  };
 
   // ============ RENDER SIDEBAR ============
   const renderSidebar = () => (
@@ -1635,10 +2345,10 @@ const SuperAdminDashboard = () => {
         </Grid>
       </Box>
 
-      {/* Quick Overview Cards */}
+      {/* Quick Overview Cards - REORGANIZED LAYOUT */}
       <Grid container spacing={3}>
-        {/* Recent Trips */}
-        <Grid item xs={12} lg={6}>
+        {/* Recent Trips (Left Side) */}
+        <Grid item xs={12} md={6}>
           <StyledCard>
             <Box sx={{ 
               p: 2.5, 
@@ -1671,11 +2381,12 @@ const SuperAdminDashboard = () => {
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Route</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Fare</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {trips.slice(0, 5).map((trip) => (
-                    <TableRow key={trip.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleViewDetails(trip, 'trip')}>
+                    <TableRow key={trip.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Avatar sx={{ width: 28, height: 28, bgcolor: '#0025DD', fontSize: '0.7rem' }}>
@@ -1697,6 +2408,17 @@ const SuperAdminDashboard = () => {
                       <TableCell>
                         <StatusChip status={trip.status} label={trip.status} size="small" />
                       </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Details" arrow>
+                          <IconButton 
+                            size="small" 
+                            onClick={() => handleViewDetails(trip, 'trip')}
+                            sx={{ bgcolor: alpha('#0025DD', 0.05) }}
+                          >
+                            <VisibilityIcon fontSize="small" sx={{ color: '#0025DD' }} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1705,8 +2427,8 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
-        {/* Recent Expenses */}
-        <Grid item xs={12} lg={6}>
+        {/* Recent Expenses (Right Side) - Now on same line with Trips */}
+        <Grid item xs={12} md={6}>
           <StyledCard>
             <Box sx={{ 
               p: 2.5, 
@@ -1743,11 +2465,12 @@ const SuperAdminDashboard = () => {
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Category</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Amount</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {expenses.slice(0, 5).map((expense) => (
-                    <TableRow key={expense.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleViewDetails(expense, 'expense')}>
+                    <TableRow key={expense.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Avatar sx={{ width: 28, height: 28, bgcolor: '#EF4444', fontSize: '0.7rem' }}>
@@ -1767,6 +2490,17 @@ const SuperAdminDashboard = () => {
                       <TableCell>
                         <StatusChip status={expense.status} label={expense.status} size="small" />
                       </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Details" arrow>
+                          <IconButton 
+                            size="small" 
+                            onClick={() => handleViewDetails(expense, 'expense')}
+                            sx={{ bgcolor: alpha('#EF4444', 0.05) }}
+                          >
+                            <VisibilityIcon fontSize="small" sx={{ color: '#EF4444' }} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1775,7 +2509,7 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
-        {/* Wallet & Group Overview */}
+        {/* Wallet Balances (Left Side) - Now paired with Groups */}
         <Grid item xs={12} md={6}>
           <StyledCard>
             <Box sx={{ 
@@ -1807,6 +2541,7 @@ const SuperAdminDashboard = () => {
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Rider</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Balance</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Available</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1826,6 +2561,17 @@ const SuperAdminDashboard = () => {
                       <TableCell align="right">
                         <Typography variant="body2" color="#10B981" fontWeight="bold">UGX {formatCurrency(wallet.available_balance)}</Typography>
                       </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Details" arrow>
+                          <IconButton 
+                            size="small" 
+                            onClick={() => handleViewDetails(wallet, 'wallet')}
+                            sx={{ bgcolor: alpha('#06B6D4', 0.05) }}
+                          >
+                            <VisibilityIcon fontSize="small" sx={{ color: '#06B6D4' }} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1834,6 +2580,7 @@ const SuperAdminDashboard = () => {
           </StyledCard>
         </Grid>
 
+        {/* Savings Groups (Right Side) - Now paired with Wallets */}
         <Grid item xs={12} md={6}>
           <StyledCard>
             <Box sx={{ 
@@ -1865,6 +2612,7 @@ const SuperAdminDashboard = () => {
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Group</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }}>Members</TableCell>
                     <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="right">Pool</TableCell>
+                    <TableCell sx={{ fontWeight: 600, bgcolor: '#F8FAFC' }} align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1879,6 +2627,17 @@ const SuperAdminDashboard = () => {
                         <Typography variant="body2" fontWeight="bold" color="#8B5CF6">
                           UGX {formatCurrency(group.total_pool)}
                         </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Details" arrow>
+                          <IconButton 
+                            size="small" 
+                            onClick={() => handleViewDetails(group, 'group')}
+                            sx={{ bgcolor: alpha('#8B5CF6', 0.05) }}
+                          >
+                            <VisibilityIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -1900,7 +2659,8 @@ const SuperAdminDashboard = () => {
     extraButtons, 
     onAdd,
     showSearch = true,
-    showStatusFilter = false 
+    showStatusFilter = false,
+    showBlockDelete = false
   }) => {
     const [localSearch, setLocalSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -2019,6 +2779,7 @@ const SuperAdminDashboard = () => {
                         <MenuItem value="completed">Completed</MenuItem>
                         <MenuItem value="inactive">Inactive</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
+                        <MenuItem value="suspended">Suspended</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -2087,8 +2848,6 @@ const SuperAdminDashboard = () => {
                       hover 
                       sx={{ 
                         '&:last-child td, &:last-child th': { border: 0 },
-                        cursor: 'pointer',
-                        transition: 'background-color 0.15s ease',
                       }}
                     >
                       <TableCell sx={{ color: '#94A3B8', fontSize: '0.8rem' }}>
@@ -2106,10 +2865,7 @@ const SuperAdminDashboard = () => {
                           <Tooltip title="View Details" arrow>
                             <IconButton 
                               size="small" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewDetails(item, type);
-                              }}
+                              onClick={() => handleViewDetails(item, type)}
                               sx={{ 
                                 bgcolor: alpha('#0025DD', 0.05),
                                 '&:hover': { bgcolor: alpha('#0025DD', 0.1) }
@@ -2118,30 +2874,40 @@ const SuperAdminDashboard = () => {
                               <VisibilityIcon fontSize="small" sx={{ color: '#0025DD' }} />
                             </IconButton>
                           </Tooltip>
-                          {type === 'contact' && (
+                          {(type === 'rider' || type === 'contact') && (
                             <>
-                              <Tooltip title="Edit" arrow>
-                                <IconButton 
-                                  size="small"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleOpenEditContact(item);
-                                  }}
-                                  sx={{ 
-                                    bgcolor: alpha('#F59E0B', 0.05),
-                                    '&:hover': { bgcolor: alpha('#F59E0B', 0.1) }
-                                  }}
-                                >
-                                  <EditIcon fontSize="small" sx={{ color: '#F59E0B' }} />
-                                </IconButton>
-                              </Tooltip>
+                              {type === 'rider' && (
+                                <Tooltip title={item.status === 'active' ? 'Block User' : 'Unblock User'} arrow>
+                                  <IconButton 
+                                    size="small"
+                                    onClick={() => handleBlockUser(item, type)}
+                                    sx={{ 
+                                      bgcolor: alpha(item.status === 'active' ? '#EF4444' : '#10B981', 0.05),
+                                      '&:hover': { bgcolor: alpha(item.status === 'active' ? '#EF4444' : '#10B981', 0.1) }
+                                    }}
+                                  >
+                                    <BlockIcon fontSize="small" sx={{ color: item.status === 'active' ? '#EF4444' : '#10B981' }} />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                              {type === 'contact' && (
+                                <Tooltip title="Edit" arrow>
+                                  <IconButton 
+                                    size="small"
+                                    onClick={() => handleOpenEditContact(item)}
+                                    sx={{ 
+                                      bgcolor: alpha('#F59E0B', 0.05),
+                                      '&:hover': { bgcolor: alpha('#F59E0B', 0.1) }
+                                    }}
+                                  >
+                                    <EditIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
                               <Tooltip title="Delete" arrow>
                                 <IconButton 
                                   size="small"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteContact(item.id);
-                                  }}
+                                  onClick={() => handleDeleteUser(item, type)}
                                   sx={{ 
                                     bgcolor: alpha('#EF4444', 0.05),
                                     '&:hover': { bgcolor: alpha('#EF4444', 0.1) }
@@ -2192,6 +2958,7 @@ const SuperAdminDashboard = () => {
       data={riders}
       type="rider"
       showStatusFilter
+      showBlockDelete
       columns={[
         { key: 'full_names', label: 'Rider', render: (r) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -2360,6 +3127,83 @@ const SuperAdminDashboard = () => {
     </Dialog>
   );
 
+  // ============ DELETE CONFIRMATION DIALOG ============
+  const renderDeleteConfirmDialog = () => (
+    <Dialog
+      open={deleteConfirmDialog.open}
+      onClose={() => setDeleteConfirmDialog({ open: false, item: null, type: '' })}
+      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400 } }}
+    >
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: '#EF4444', color: 'white' }}>
+        <WarningIcon />
+        <Typography variant="h6" fontWeight="bold">Confirm Delete</Typography>
+      </DialogTitle>
+      <DialogContent sx={{ mt: 2 }}>
+        <DialogContentText>
+          Are you sure you want to delete <strong>{deleteConfirmDialog.item?.full_names || deleteConfirmDialog.item?.full_name}</strong>?
+          This action cannot be undone and will permanently remove all associated data.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ p: 2, gap: 1 }}>
+        <Button 
+          onClick={() => setDeleteConfirmDialog({ open: false, item: null, type: '' })}
+          variant="outlined"
+          sx={{ borderColor: '#64748B', color: '#64748B' }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={confirmDeleteUser}
+          variant="contained"
+          sx={{ bgcolor: '#EF4444', '&:hover': { bgcolor: '#DC2626' } }}
+          startIcon={<DeleteIcon />}
+        >
+          Delete Permanently
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  // ============ BLOCK CONFIRMATION DIALOG ============
+  const renderBlockConfirmDialog = () => (
+    <Dialog
+      open={blockConfirmDialog.open}
+      onClose={() => setBlockConfirmDialog({ open: false, item: null, type: '' })}
+      PaperProps={{ sx: { borderRadius: 3, maxWidth: 400 } }}
+    >
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: blockConfirmDialog.item?.status === 'active' ? '#EF4444' : '#10B981', color: 'white' }}>
+        <BlockIcon />
+        <Typography variant="h6" fontWeight="bold">
+          {blockConfirmDialog.item?.status === 'active' ? 'Confirm Block User' : 'Confirm Unblock User'}
+        </Typography>
+      </DialogTitle>
+      <DialogContent sx={{ mt: 2 }}>
+        <DialogContentText>
+          Are you sure you want to {blockConfirmDialog.item?.status === 'active' ? 'block' : 'unblock'} <strong>{blockConfirmDialog.item?.full_names}</strong>?
+          {blockConfirmDialog.item?.status === 'active' 
+            ? ' This user will no longer be able to access the platform or perform any actions.'
+            : ' This user will regain full access to the platform.'}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ p: 2, gap: 1 }}>
+        <Button 
+          onClick={() => setBlockConfirmDialog({ open: false, item: null, type: '' })}
+          variant="outlined"
+          sx={{ borderColor: '#64748B', color: '#64748B' }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={confirmBlockUser}
+          variant="contained"
+          sx={{ bgcolor: blockConfirmDialog.item?.status === 'active' ? '#EF4444' : '#10B981' }}
+        >
+          {blockConfirmDialog.item?.status === 'active' ? 'Yes, Block User' : 'Yes, Unblock User'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   // ============ TAB CONTENT ROUTER ============
   const renderTabContent = () => {
     switch (activeTab) {
@@ -2420,11 +3264,14 @@ const SuperAdminDashboard = () => {
             )},
             { key: 'admin_rider', label: 'Admin' },
             { key: 'member_count', label: 'Members', render: (g) => (
-              <LinearProgress 
-                variant="determinate" 
-                value={(g.member_count / g.max_members) * 100} 
-                sx={{ height: 6, borderRadius: 3, bgcolor: alpha('#8B5CF6', 0.1), '& .MuiLinearProgress-bar': { bgcolor: '#8B5CF6' }, width: 100 }}
-              />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(g.member_count / g.max_members) * 100} 
+                  sx={{ height: 6, borderRadius: 3, bgcolor: alpha('#8B5CF6', 0.1), '& .MuiLinearProgress-bar': { bgcolor: '#8B5CF6' }, width: 80 }}
+                />
+                <Typography variant="caption">{g.member_count}/{g.max_members}</Typography>
+              </Box>
             )},
             { key: 'contrib_amount', label: 'Contribution', render: (g) => (
               <Box>
@@ -2604,7 +3451,51 @@ const SuperAdminDashboard = () => {
       </MainContent>
 
       {/* Dialogs */}
+      {showDetailsModal && (
+        <Dialog 
+          open={showDetailsModal} 
+          onClose={handleCloseDetailsModal}
+          maxWidth="lg"
+          fullWidth
+          fullScreen={isMobile}
+          TransitionComponent={Slide}
+          PaperProps={{ 
+            sx: { 
+              borderRadius: { xs: 0, sm: 4 },
+              bgcolor: '#F8FAFC'
+            } 
+          }}
+        >
+          <Box sx={{ bgcolor: '#0025DD', color: 'white', p: 2.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6" fontWeight="bold">
+                {modalType === 'rider' ? 'Rider Details' : 
+                 modalType === 'trip' ? 'Trip Details' :
+                 modalType === 'expense' ? 'Expense Details' :
+                 modalType === 'contact' ? 'Contact Details' :
+                 modalType === 'wallet' ? 'Wallet Details' :
+                 modalType === 'group' ? 'Group Details' :
+                 modalType === 'agent' ? 'Agent Details' :
+                 modalType === 'delivery' ? 'Delivery Details' :
+                 modalType === 'withdrawal' ? 'Withdrawal Details' : 'Details'}
+              </Typography>
+              <IconButton onClick={handleCloseDetailsModal} sx={{ color: 'white' }}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          <DialogContent sx={{ p: 3 }}>
+            {renderDetailsModal()}
+          </DialogContent>
+          <DialogActions sx={{ p: 2.5, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+            <Button onClick={handleCloseDetailsModal} sx={{ color: '#64748B' }}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      
       {contactDialogOpen && renderContactDialog()}
+      {renderDeleteConfirmDialog()}
+      {renderBlockConfirmDialog()}
       
       {/* Scroll to Top */}
       <ScrollToTop />
