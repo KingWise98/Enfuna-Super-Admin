@@ -1,0 +1,777 @@
+// Riders Data (Boda Boda)
+export const DUMMY_RIDERS = [
+  { 
+    id: 'RDR-KLA-001', 
+    full_names: 'John Mukasa', 
+    email: 'john.mukasa@gmail.com', 
+    phone_number: '+256 772 123456', 
+    status: 'active', 
+    total_trips: 342, 
+    total_earnings: 4500000,
+    total_deliveries: 89,
+    rating: 4.8,
+    created_at: '2024-01-15T08:30:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'Bajaj Boxer 150',
+    license_plate: 'UXB 123K',
+    rider_type: 'full_time',
+    is_verified: true,
+    is_agent: true,
+    wallet_balance: 450000,
+    profile_photo: null,
+    stage: 'Kamwokya Stage',
+    division: 'Central Division',
+    district: 'Kampala'
+  },
+  { 
+    id: 'RDR-KLA-002', 
+    full_names: 'Sarah Akello', 
+    email: 'sarah.akello@yahoo.com', 
+    phone_number: '+256 701 234567', 
+    status: 'active', 
+    total_trips: 256, 
+    total_earnings: 3200000,
+    total_deliveries: 45,
+    rating: 4.6,
+    created_at: '2024-02-20T10:00:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'TVS Star HLX 125',
+    license_plate: 'UAA 456B',
+    rider_type: 'part_time',
+    is_verified: true,
+    is_agent: false,
+    wallet_balance: 320000,
+    profile_photo: null,
+    stage: 'Wandegeya Stage',
+    division: 'Central Division',
+    district: 'Kampala'
+  },
+  { 
+    id: 'RDR-KLA-003', 
+    full_names: 'David Ochieng', 
+    email: 'david.ochieng@gmail.com', 
+    phone_number: '+256 782 345678', 
+    status: 'pending', 
+    total_trips: 0, 
+    total_earnings: 0,
+    total_deliveries: 0,
+    rating: 0,
+    created_at: '2024-03-10T14:00:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'Honda CG 125',
+    license_plate: 'UAD 789C',
+    rider_type: 'full_time',
+    is_verified: false,
+    is_agent: false,
+    wallet_balance: 0,
+    profile_photo: null,
+    stage: 'Nakawa Stage',
+    division: 'Nakawa Division',
+    district: 'Kampala'
+  },
+  { 
+    id: 'RDR-KLA-004', 
+    full_names: 'Grace Nambi', 
+    email: 'grace.nambi@outlook.com', 
+    phone_number: '+256 753 456789', 
+    status: 'active', 
+    total_trips: 523, 
+    total_earnings: 6800000,
+    total_deliveries: 156,
+    rating: 4.9,
+    created_at: '2023-11-05T09:00:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'Yamaha Crypton 115',
+    license_plate: 'UAE 012D',
+    rider_type: 'full_time',
+    is_verified: true,
+    is_agent: true,
+    wallet_balance: 680000,
+    profile_photo: null,
+    stage: 'Old Taxi Park Stage',
+    division: 'Central Division',
+    district: 'Kampala'
+  },
+  { 
+    id: 'RDR-KLA-005', 
+    full_names: 'Peter Ssali', 
+    email: 'peter.ssali@gmail.com', 
+    phone_number: '+256 774 567890', 
+    status: 'inactive', 
+    total_trips: 89, 
+    total_earnings: 1100000,
+    total_deliveries: 23,
+    rating: 4.2,
+    created_at: '2024-01-30T11:00:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'Bajaj CT 100',
+    license_plate: 'UAF 345E',
+    rider_type: 'part_time',
+    is_verified: true,
+    is_agent: false,
+    wallet_balance: 110000,
+    profile_photo: null,
+    stage: 'Kawempe Stage',
+    division: 'Kawempe Division',
+    district: 'Kampala'
+  },
+  {
+    id: 'RDR-KLA-006',
+    full_names: 'Aisha Namubiru',
+    email: 'aisha.namubiru@gmail.com',
+    phone_number: '+256 775 678901',
+    status: 'active',
+    total_trips: 678,
+    total_earnings: 8900000,
+    total_deliveries: 201,
+    rating: 4.7,
+    created_at: '2023-08-15T07:30:00',
+    vehicle_type: 'Boda Boda',
+    motorcycle_model: 'Honda Ace 110',
+    license_plate: 'UAG 678F',
+    rider_type: 'full_time',
+    is_verified: true,
+    is_agent: true,
+    wallet_balance: 890000,
+    profile_photo: null,
+    stage: 'Ntinda Stage',
+    division: 'Nakawa Division',
+    district: 'Kampala'
+  }
+];
+
+// Trips Data
+export const DUMMY_TRIPS = [
+  { 
+    id: 'TRP-20241001', 
+    rider_name: 'John Mukasa', 
+    rider_id: 'RDR-KLA-001',
+    customer_name: 'Alice Nabatanzi',
+    pickup_location: 'Kamwokya, Kampala', 
+    destination: 'Nakasero Market, Kampala', 
+    trip_fare: 15000, 
+    payment_method: 'mobile_money',
+    payment_provider: 'MTN Mobile Money',
+    status: 'completed', 
+    duration: '25 min',
+    distance: '5.2 km',
+    created_at: '2024-03-25T08:30:00',
+    completed_at: '2024-03-25T08:55:00'
+  },
+  { 
+    id: 'TRP-20241002', 
+    rider_name: 'Aisha Namubiru', 
+    rider_id: 'RDR-KLA-006',
+    customer_name: 'Robert Sejjoba',
+    pickup_location: 'Ntinda Trading Centre', 
+    destination: 'Kampala Road', 
+    trip_fare: 12000, 
+    payment_method: 'cash',
+    payment_provider: null,
+    status: 'completed', 
+    duration: '20 min',
+    distance: '4.1 km',
+    created_at: '2024-03-25T09:15:00',
+    completed_at: '2024-03-25T09:35:00'
+  },
+  { 
+    id: 'TRP-20241003', 
+    rider_name: 'Grace Nambi', 
+    rider_id: 'RDR-KLA-004',
+    customer_name: 'Henry Mudoola',
+    pickup_location: 'Makerere University Gate', 
+    destination: 'Wandegeya Shopping Centre', 
+    trip_fare: 8000, 
+    payment_method: 'wallet',
+    payment_provider: 'Enfuna Wallet',
+    status: 'completed', 
+    duration: '15 min',
+    distance: '3.0 km',
+    created_at: '2024-03-25T10:00:00',
+    completed_at: '2024-03-25T10:15:00'
+  },
+  { 
+    id: 'TRP-20241004', 
+    rider_name: 'John Mukasa', 
+    rider_id: 'RDR-KLA-001',
+    customer_name: 'Guest Rider',
+    pickup_location: 'Owino Market, Kampala', 
+    destination: 'Kisenyi, Kampala', 
+    trip_fare: 10000, 
+    payment_method: 'mobile_money',
+    payment_provider: 'Airtel Money',
+    status: 'pending', 
+    duration: '20 min',
+    distance: '3.8 km',
+    created_at: '2024-03-25T11:30:00',
+    completed_at: null
+  },
+  { 
+    id: 'TRP-20241005', 
+    rider_name: 'Sarah Akello', 
+    rider_id: 'RDR-KLA-002',
+    customer_name: 'Martha Auma',
+    pickup_location: 'Acacia Mall, Kisimenti', 
+    destination: 'Lugogo, Kampala', 
+    trip_fare: 12000, 
+    payment_method: 'cash',
+    payment_provider: null,
+    status: 'cancelled', 
+    duration: '0 min',
+    distance: '2.5 km',
+    created_at: '2024-03-25T13:45:00',
+    completed_at: null
+  },
+  {
+    id: 'TRP-20241006',
+    rider_name: 'Aisha Namubiru',
+    rider_id: 'RDR-KLA-006',
+    customer_name: 'Faith Amongi',
+    pickup_location: 'Mulago Hospital',
+    destination: 'Kololo Airstrip',
+    trip_fare: 18000,
+    payment_method: 'wallet',
+    payment_provider: 'Enfuna Wallet',
+    status: 'completed',
+    duration: '30 min',
+    distance: '6.5 km',
+    created_at: '2024-03-25T14:00:00',
+    completed_at: '2024-03-25T14:30:00'
+  }
+];
+
+// Expenses Data
+export const DUMMY_EXPENSES = [
+  { 
+    id: 'EXP-20241001', 
+    rider_name: 'John Mukasa', 
+    rider_id: 'RDR-KLA-001',
+    category: 'Fuel', 
+    amount: 25000, 
+    expense_type: 'operational',
+    description: 'Petrol for daily operations',
+    receipt_url: null,
+    status: 'approved',
+    created_at: '2024-03-25T06:30:00',
+    approved_by: 'System Admin'
+  },
+  { 
+    id: 'EXP-20241002', 
+    rider_name: 'Aisha Namubiru', 
+    rider_id: 'RDR-KLA-006',
+    category: 'Maintenance', 
+    amount: 85000, 
+    expense_type: 'repair',
+    description: 'Brake pad replacement and chain adjustment',
+    receipt_url: null,
+    status: 'approved',
+    created_at: '2024-03-24T10:00:00',
+    approved_by: 'System Admin'
+  },
+  { 
+    id: 'EXP-20241003', 
+    rider_name: 'Grace Nambi', 
+    rider_id: 'RDR-KLA-004',
+    category: 'Insurance', 
+    amount: 120000, 
+    expense_type: 'monthly',
+    description: 'Third-party motorcycle insurance renewal',
+    receipt_url: null,
+    status: 'pending',
+    created_at: '2024-03-20T08:00:00',
+    approved_by: null
+  },
+  { 
+    id: 'EXP-20241004', 
+    rider_name: 'Sarah Akello', 
+    rider_id: 'RDR-KLA-002',
+    category: 'Parking', 
+    amount: 5000, 
+    expense_type: 'daily',
+    description: 'Stage parking fee - Wandegeya',
+    receipt_url: null,
+    status: 'approved',
+    created_at: '2024-03-25T07:00:00',
+    approved_by: 'System Admin'
+  },
+  { 
+    id: 'EXP-20241005', 
+    rider_name: 'Peter Ssali', 
+    rider_id: 'RDR-KLA-005',
+    category: 'Repairs', 
+    amount: 45000, 
+    expense_type: 'repair',
+    description: 'Tyre puncture repair and tube replacement',
+    receipt_url: null,
+    status: 'rejected',
+    created_at: '2024-03-23T14:00:00',
+    approved_by: 'System Admin',
+    rejection_reason: 'Insufficient documentation'
+  }
+];
+
+// Deliveries Data
+export const DUMMY_DELIVERIES = [
+  {
+    id: 'DEL-20241001',
+    rider_name: 'Grace Nambi',
+    rider_id: 'RDR-KLA-004',
+    customer_name: 'Sunrise Electronics',
+    pickup_location: 'Kikuubo, Kampala',
+    drop_off_location: 'Ntinda, Kampala',
+    package_type: 'Electronics',
+    package_weight: '2.5 kg',
+    delivery_fee: 15000,
+    payment_method: 'mobile_money',
+    status: 'completed',
+    created_at: '2024-03-25T10:30:00',
+    completed_at: '2024-03-25T11:15:00'
+  },
+  {
+    id: 'DEL-20241002',
+    rider_name: 'John Mukasa',
+    rider_id: 'RDR-KLA-001',
+    customer_name: 'Tropical Fresh Foods',
+    pickup_location: 'Nakawa Market',
+    drop_off_location: 'Kololo, Kampala',
+    package_type: 'Food',
+    package_weight: '5.0 kg',
+    delivery_fee: 12000,
+    payment_method: 'cash',
+    status: 'completed',
+    created_at: '2024-03-25T11:00:00',
+    completed_at: '2024-03-25T11:35:00'
+  },
+  {
+    id: 'DEL-20241003',
+    rider_name: 'Aisha Namubiru',
+    rider_id: 'RDR-KLA-006',
+    customer_name: 'Kampala Auto Parts',
+    pickup_location: 'Industrial Area, Kampala',
+    drop_off_location: 'Kawempe, Kampala',
+    package_type: 'Auto Parts',
+    package_weight: '8.0 kg',
+    delivery_fee: 20000,
+    payment_method: 'wallet',
+    status: 'pending',
+    created_at: '2024-03-25T12:00:00',
+    completed_at: null
+  }
+];
+
+// Groups Data (Savings Groups for Riders)
+export const DUMMY_GROUPS = [
+  {
+    id: 'GRP-001',
+    name: 'Kamwokya Riders SACCO',
+    description: 'Savings and credit group for Kamwokya stage riders',
+    group_type: 'savings',
+    member_count: 25,
+    max_members: 50,
+    contrib_amount: 50000,
+    contrib_frequency: 'weekly',
+    total_pool: 1250000,
+    is_public: true,
+    created_at: '2024-01-01T00:00:00',
+    admin_rider: 'John Mukasa',
+    status: 'active'
+  },
+  {
+    id: 'GRP-002',
+    name: 'Wandegeya Boda Welfare',
+    description: 'Welfare group for Wandegeya riders',
+    group_type: 'welfare',
+    member_count: 18,
+    max_members: 30,
+    contrib_amount: 30000,
+    contrib_frequency: 'monthly',
+    total_pool: 540000,
+    is_public: false,
+    created_at: '2024-02-15T00:00:00',
+    admin_rider: 'Sarah Akello',
+    status: 'active'
+  },
+  {
+    id: 'GRP-003',
+    name: 'Ntinda Investment Club',
+    description: 'Investment group for long-term savings',
+    group_type: 'investment',
+    member_count: 30,
+    max_members: 50,
+    contrib_amount: 100000,
+    contrib_frequency: 'monthly',
+    total_pool: 3000000,
+    is_public: true,
+    created_at: '2023-06-01T00:00:00',
+    admin_rider: 'Aisha Namubiru',
+    status: 'active'
+  },
+  {
+    id: 'GRP-004',
+    name: 'Old Taxi Park Riders',
+    description: 'Daily savings group for Old Taxi Park stage',
+    group_type: 'savings',
+    member_count: 40,
+    max_members: 60,
+    contrib_amount: 20000,
+    contrib_frequency: 'daily',
+    total_pool: 800000,
+    is_public: true,
+    created_at: '2023-09-01T00:00:00',
+    admin_rider: 'Grace Nambi',
+    status: 'active'
+  }
+];
+
+// Wallets Data
+export const DUMMY_WALLETS = [
+  { 
+    id: 'WAL-001', 
+    rider_name: 'John Mukasa', 
+    rider_id: 'RDR-KLA-001',
+    balance: 450000, 
+    available_balance: 380000, 
+    reserved_balance: 70000, 
+    currency: 'UGX', 
+    is_active: true,
+    total_deposits: 4500000,
+    total_withdrawals: 4050000,
+    last_transaction: '2024-03-25T10:00:00'
+  },
+  { 
+    id: 'WAL-002', 
+    rider_name: 'Sarah Akello', 
+    rider_id: 'RDR-KLA-002',
+    balance: 320000, 
+    available_balance: 300000, 
+    reserved_balance: 20000, 
+    currency: 'UGX', 
+    is_active: true,
+    total_deposits: 3200000,
+    total_withdrawals: 2880000,
+    last_transaction: '2024-03-24T15:00:00'
+  },
+  { 
+    id: 'WAL-003', 
+    rider_name: 'Grace Nambi', 
+    rider_id: 'RDR-KLA-004',
+    balance: 680000, 
+    available_balance: 650000, 
+    reserved_balance: 30000, 
+    currency: 'UGX', 
+    is_active: true,
+    total_deposits: 6800000,
+    total_withdrawals: 6120000,
+    last_transaction: '2024-03-25T09:00:00'
+  },
+  { 
+    id: 'WAL-004', 
+    rider_name: 'Aisha Namubiru', 
+    rider_id: 'RDR-KLA-006',
+    balance: 890000, 
+    available_balance: 870000, 
+    reserved_balance: 20000, 
+    currency: 'UGX', 
+    is_active: true,
+    total_deposits: 8900000,
+    total_withdrawals: 8010000,
+    last_transaction: '2024-03-25T11:00:00'
+  },
+  { 
+    id: 'WAL-005', 
+    rider_name: 'Peter Ssali', 
+    rider_id: 'RDR-KLA-005',
+    balance: 110000, 
+    available_balance: 90000, 
+    reserved_balance: 20000, 
+    currency: 'UGX', 
+    is_active: false,
+    total_deposits: 1100000,
+    total_withdrawals: 990000,
+    last_transaction: '2024-03-20T08:00:00'
+  }
+];
+
+// Contacts Data
+export const DUMMY_CONTACTS = [
+  { 
+    id: 'CNT-001', 
+    full_name: 'Alice Nabatanzi', 
+    type: 'customer', 
+    phone: '+256 776 123456', 
+    email: 'alice.n@gmail.com', 
+    bussiness_name: 'Tropical Fresh Foods', 
+    location: 'Nakawa, Kampala', 
+    loyalty_points: 850, 
+    status: 'active',
+    total_trips: 45,
+    total_spent: 675000,
+    created_at: '2024-01-10T00:00:00'
+  },
+  { 
+    id: 'CNT-002', 
+    full_name: 'Robert Sejjoba', 
+    type: 'supplier', 
+    phone: '+256 783 234567', 
+    email: 'robert.s@yahoo.com', 
+    bussiness_name: 'Kampala Auto Parts', 
+    location: 'Kisenyi, Kampala', 
+    loyalty_points: 1200, 
+    status: 'active',
+    total_orders: 78,
+    total_spent: 2340000,
+    created_at: '2023-08-15T00:00:00'
+  },
+  { 
+    id: 'CNT-003', 
+    full_name: 'Martha Auma', 
+    type: 'employee', 
+    phone: '+256 701 345678', 
+    email: 'martha.a@gmail.com', 
+    bussiness_name: 'Enfuna Uganda Ltd', 
+    location: 'Kololo, Kampala', 
+    loyalty_points: 450, 
+    status: 'active',
+    total_trips: 0,
+    total_spent: 0,
+    created_at: '2024-03-01T00:00:00'
+  },
+  { 
+    id: 'CNT-004', 
+    full_name: 'Henry Mudoola', 
+    type: 'customer', 
+    phone: '+256 754 456789', 
+    email: 'henry.m@outlook.com', 
+    bussiness_name: 'Sunrise Electronics', 
+    location: 'Kikuubo, Kampala', 
+    loyalty_points: 2300, 
+    status: 'active',
+    total_trips: 156,
+    total_spent: 2340000,
+    created_at: '2023-06-20T00:00:00'
+  },
+  { 
+    id: 'CNT-005', 
+    full_name: 'Faith Amongi', 
+    type: 'supplier', 
+    phone: '+256 782 567890', 
+    email: 'faith.a@gmail.com', 
+    bussiness_name: 'Safety First Equipment', 
+    location: 'Industrial Area, Kampala', 
+    loyalty_points: 680, 
+    status: 'inactive',
+    total_orders: 34,
+    total_spent: 1020000,
+    created_at: '2023-05-10T00:00:00'
+  }
+];
+
+// Withdrawals Data
+export const DUMMY_WITHDRAWALS = [
+  {
+    id: 'WTH-001',
+    rider_name: 'John Mukasa',
+    rider_id: 'RDR-KLA-001',
+    amount: 150000,
+    payment_method: 'mobile_money',
+    phone_number: '+256 772 123456',
+    status: 'pending',
+    created_at: '2024-03-25T08:00:00'
+  },
+  {
+    id: 'WTH-002',
+    rider_name: 'Aisha Namubiru',
+    rider_id: 'RDR-KLA-006',
+    amount: 200000,
+    payment_method: 'mobile_money',
+    phone_number: '+256 775 678901',
+    status: 'pending',
+    created_at: '2024-03-25T09:30:00'
+  },
+  {
+    id: 'WTH-003',
+    rider_name: 'Grace Nambi',
+    rider_id: 'RDR-KLA-004',
+    amount: 300000,
+    payment_method: 'bank_transfer',
+    phone_number: '+256 753 456789',
+    status: 'approved',
+    created_at: '2024-03-24T14:00:00',
+    approved_at: '2024-03-24T16:00:00'
+  },
+  {
+    id: 'WTH-004',
+    rider_name: 'Sarah Akello',
+    rider_id: 'RDR-KLA-002',
+    amount: 100000,
+    payment_method: 'mobile_money',
+    phone_number: '+256 701 234567',
+    status: 'rejected',
+    created_at: '2024-03-23T10:00:00',
+    rejection_reason: 'Insufficient balance'
+  }
+];
+
+// Agents Data
+export const DUMMY_AGENTS = [
+  {
+    id: 'AGT-001',
+    rider_name: 'John Mukasa',
+    rider_id: 'RDR-KLA-001',
+    referral_code: 'JMUK2024',
+    total_referrals: 45,
+    active_referrals: 38,
+    total_commission: 2250000,
+    available_commission: 1800000,
+    is_active: true,
+    commission_rate: 5,
+    created_at: '2024-02-01T00:00:00',
+    tier: 'Gold',
+    region: 'Central Kampala',
+    status: 'approved'
+  },
+  {
+    id: 'AGT-002',
+    rider_name: 'Grace Nambi',
+    rider_id: 'RDR-KLA-004',
+    referral_code: 'GNAM2024',
+    total_referrals: 67,
+    active_referrals: 55,
+    total_commission: 3350000,
+    available_commission: 2800000,
+    is_active: true,
+    commission_rate: 7,
+    created_at: '2023-12-01T00:00:00',
+    tier: 'Platinum',
+    region: 'Central Kampala',
+    status: 'approved'
+  },
+  {
+    id: 'AGT-003',
+    rider_name: 'Aisha Namubiru',
+    rider_id: 'RDR-KLA-006',
+    referral_code: 'ANAM2023',
+    total_referrals: 89,
+    active_referrals: 72,
+    total_commission: 4450000,
+    available_commission: 3900000,
+    is_active: true,
+    commission_rate: 10,
+    created_at: '2023-09-01T00:00:00',
+    tier: 'Diamond',
+    region: 'Nakawa Division',
+    status: 'approved'
+  },
+  {
+    id: 'AGT-004',
+    rider_name: 'David Ochieng',
+    rider_id: 'RDR-KLA-003',
+    referral_code: 'DOCH2024',
+    total_referrals: 0,
+    active_referrals: 0,
+    total_commission: 0,
+    available_commission: 0,
+    is_active: false,
+    commission_rate: 3,
+    created_at: '2024-03-20T00:00:00',
+    tier: 'Bronze',
+    region: 'Nakawa Division',
+    status: 'pending'
+  }
+];
+
+// Agent Applications Data
+export const DUMMY_AGENT_APPLICATIONS = [
+  {
+    id: 'APP-001',
+    rider_name: 'Peter Ssali',
+    rider_id: 'RDR-KLA-005',
+    email: 'peter.ssali@gmail.com',
+    phone: '+256 774 567890',
+    experience: '2 years as boda rider',
+    reason: 'I want to help grow the platform by referring new riders',
+    status: 'pending',
+    applied_at: '2024-03-20T10:00:00'
+  },
+  {
+    id: 'APP-002',
+    rider_name: 'Sarah Akello',
+    rider_id: 'RDR-KLA-002',
+    email: 'sarah.akello@yahoo.com',
+    phone: '+256 701 234567',
+    experience: '1 year as boda rider',
+    reason: 'I have a large network of riders in Wandegeya',
+    status: 'pending',
+    applied_at: '2024-03-22T14:00:00'
+  }
+];
+
+// Disputes Data
+export const DUMMY_DISPUTES = [
+  {
+    id: 'DSP-001',
+    ticket_number: 'TKT-20240325-001',
+    rider_name: 'John Mukasa',
+    rider_id: 'RDR-KLA-001',
+    customer_name: 'Alice Nabatanzi',
+    trip_id: 'TRP-20241001',
+    title: 'Overcharged for trip',
+    description: 'Customer claims she was charged UGX 15,000 instead of UGX 10,000 for a short distance trip.',
+    status: 'pending',
+    priority: 'high',
+    category: 'pricing',
+    created_at: '2024-03-25T09:00:00',
+    messages: [
+      { id: 'msg1', sender: 'customer', sender_name: 'Alice Nabatanzi', message: 'I was charged UGX 15,000 but the distance was only 5km.', timestamp: '2024-03-25T09:00:00', is_read: true },
+      { id: 'msg2', sender: 'rider', sender_name: 'John Mukasa', message: 'The customer agreed to the fare before the trip started.', timestamp: '2024-03-25T09:15:00', is_read: true },
+      { id: 'msg3', sender: 'admin', sender_name: 'Admin Support', message: 'Thank you for reporting. We are investigating this issue.', timestamp: '2024-03-25T09:30:00', is_read: true }
+    ],
+    resolution_notes: null,
+    resolved_at: null,
+    resolved_by: null
+  },
+  {
+    id: 'DSP-002',
+    ticket_number: 'TKT-20240325-002',
+    rider_name: 'Aisha Namubiru',
+    rider_id: 'RDR-KLA-006',
+    customer_name: 'Robert Sejjoba',
+    trip_id: 'TRP-20241002',
+    title: 'Rider took wrong route',
+    description: 'Customer complains the rider took a longer route than necessary, increasing the fare.',
+    status: 'investigating',
+    priority: 'medium',
+    category: 'route',
+    created_at: '2024-03-25T10:30:00',
+    messages: [
+      { id: 'msg1', sender: 'customer', sender_name: 'Robert Sejjoba', message: 'The rider went through Jinja Road instead of the shorter route.', timestamp: '2024-03-25T10:30:00', is_read: true },
+      { id: 'msg2', sender: 'rider', sender_name: 'Aisha Namubiru', message: 'Jinja Road had less traffic, so it was faster.', timestamp: '2024-03-25T10:45:00', is_read: true },
+      { id: 'msg3', sender: 'admin', sender_name: 'Admin Support', message: 'We are looking into the route taken.', timestamp: '2024-03-25T11:00:00', is_read: false }
+    ],
+    resolution_notes: null,
+    resolved_at: null,
+    resolved_by: null
+  },
+  {
+    id: 'DSP-003',
+    ticket_number: 'TKT-20240324-001',
+    rider_name: 'Grace Nambi',
+    rider_id: 'RDR-KLA-004',
+    customer_name: 'Henry Mudoola',
+    trip_id: 'TRP-20241003',
+    title: 'Item damaged during delivery',
+    description: 'Customer reports that the delivered item (electronics) was damaged upon arrival.',
+    status: 'resolved',
+    priority: 'high',
+    category: 'damage',
+    created_at: '2024-03-24T14:00:00',
+    messages: [
+      { id: 'msg1', sender: 'customer', sender_name: 'Henry Mudoola', message: 'The box was crushed and the electronics inside are damaged.', timestamp: '2024-03-24T14:00:00', is_read: true },
+      { id: 'msg2', sender: 'rider', sender_name: 'Grace Nambi', message: 'The package was already damaged when I picked it up.', timestamp: '2024-03-24T14:30:00', is_read: true },
+      { id: 'msg3', sender: 'admin', sender_name: 'Admin Support', message: 'We have reviewed the case. Partial refund issued to customer.', timestamp: '2024-03-24T16:00:00', is_read: true }
+    ],
+    resolution_notes: 'Partial refund of UGX 8,000 issued to customer. Rider not at fault.',
+    resolved_at: '2024-03-24T16:00:00',
+    resolved_by: 'Admin Support'
+  }
+];
